@@ -10,7 +10,7 @@ function App() {
   const sendPrompt = async (inputText: string) => {
     console.log("Sending prompt: ", inputText);
     try {
-      const res = await axios.post("http://localhost:5001/api/prompt", {prompt: inputText});
+      const res = await axios.post("http://localhost:5001/api/text", {prompt: inputText});
       if (res.status === 200) {
         setResponse(res.data);
       }
