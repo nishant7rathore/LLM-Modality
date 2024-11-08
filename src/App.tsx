@@ -1,23 +1,29 @@
 import './App.css';
-import React from 'react';
+import axios from "axios";
+import { useState } from 'react';
+import Prompt from './components/prompt';
+import Display from './components/displayFrame';
 
 function App() {
+  const [response, setResponse] = useState<string>("");
+
+  const sendPrompt = async (inputText: string) => {
+    console.log("Sending prompt: ", inputText);
+    try {
+      const res = await axios.post("http://localhost:5001/api/prompt", {prompt: inputText});
+      if (res.status === 200) {
+        setResponse(res.data);
+      }
+    }
+    catch (error) {
+      console.error("Error sending prompt: ", error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>React App</h1>
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Display response = {response} />
+      <Prompt  sendPrompt = {sendPrompt}/>
     </div>
   );
 }
