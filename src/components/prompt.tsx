@@ -2,11 +2,12 @@ import { useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
 
 type Props = {
-    sendPrompt: (inputText: string) => void;
+    sendPrompt: (inputText: string, isImage: boolean) => void;
 };
 const Prompt = ({sendPrompt}: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
+  const [isImage, setIsImage] = useState<boolean>(false);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -21,11 +22,15 @@ const Prompt = ({sendPrompt}: Props) => {
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
   };
+  
+  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsImage(event.target.checked);
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSent(true);
-    await sendPrompt(inputText);
+    await sendPrompt(inputText, isImage);
     setInputText("");
     setIsSent(false);
   };
@@ -41,6 +46,15 @@ const Prompt = ({sendPrompt}: Props) => {
           placeholder="Build your prompt here..."
           rows={1}
         />
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={isImage}
+            onChange={handleToggleChange}
+            className="form-checkbox" 
+          />
+          <span>Image</span>
+        </label>
         <button
           type="submit"
           disabled={isSent || inputText.trim() === ""}

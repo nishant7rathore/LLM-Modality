@@ -4,15 +4,23 @@ import { useState } from 'react';
 import Prompt from './components/prompt';
 import Display from './components/displayFrame';
 
-function App() {
-  const [response, setResponse] = useState<string>("");
+type Response = {
+  type: 'text' | 'image';
+  content: string;
+};
 
-  const sendPrompt = async (inputText: string) => {
+function App() {
+  const [response, setResponse] = useState<Response | null>(null);
+
+  const sendPrompt = async (inputText: string, isImage: boolean) => {
     console.log("Sending prompt: ", inputText);
     try {
-      const res = await axios.post("http://localhost:5001/api/text", {prompt: inputText});
+      const url = isImage ? "http://localhost:5001/api/dalle" : "http://localhost:5001/api/text";
+      const res = await axios.post(url, {prompt: inputText});
       if (res.status === 200) {
-        setResponse(res.data);
+        const content = res.data;
+        const type = isImage ? 'image' : 'text';
+        setResponse({ type, content });
       }
     }
     catch (error) {

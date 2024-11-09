@@ -22,19 +22,18 @@ app.post('/api/text', async(req, res) => {
     console.log("Recieved Prompt: ",prompt);
 
     try {
-        const stream = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o",
             messages: [
                 { role: 'system', content: 'You are a helpful assistant.'},
                 {
                   role: 'user',
                   content: prompt,
                 },
-            ],
-            stream: true,
+            ]
         });
-        console.log("Completion: ", stream.choices[0]);
-        response = stream.choices[0].message.content;
+        console.log("Completion: ", completion);
+        response = completion.choices[0].message.content;
     }
     catch (error) {
         console.log("Error: ", error);
@@ -52,7 +51,7 @@ app.post('/api/dalle', async(req,res) => {
     try {
         const response = await openai.images.generate({
             model: "dall-e-3",
-            prompt: "a white siamese cat",
+            prompt: prompt,
             n: 1,
             size: "1024x1024",
           });
