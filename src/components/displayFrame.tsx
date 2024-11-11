@@ -10,7 +10,7 @@ type Props = {
   const Display = ({ response }: Props) => {
     return (
       <div className="max-w-3xl mx-auto my-4 p-4 border border-gray-300 rounded-md shadow-md">
-        <h1 className="text-xl font-bold mb-2">Response</h1>
+        <h1 className="text-xl font-bold mb-2">Response:</h1>
         {response ? (
             response.type === 'image' ? (
                 <div className="flex justify-center items-center">
