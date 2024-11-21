@@ -4,7 +4,7 @@ import { FaArrowUp } from "react-icons/fa";
 type Props = {
     sendPrompt: (inputText: string, isImage: boolean) => void;
 };
-const Prompt = ({sendPrompt}: Props) => {
+const InputPrompt = ({sendPrompt}: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
   const [isImage, setIsImage] = useState<boolean>(false);
@@ -67,4 +67,4 @@ const Prompt = ({sendPrompt}: Props) => {
   );
 };
 
-export default Prompt;
+export default InputPrompt;

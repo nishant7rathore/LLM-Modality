@@ -1,13 +1,14 @@
 // API route for gpt-text calls
 const express = require('express');
 const { OpenAI } = require('openai');
+const authenticateToken = require('../middleware/auth');
 require('dotenv').config();
 
 // Basic configuration
 const router = express.Router();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-router.post('/text', async(req, res) => {
+router.post('/text', authenticateToken, async(req, res) => {
     const { prompt } = req.body;
     let response = "";
     console.log("Recieved Prompt: ", prompt);

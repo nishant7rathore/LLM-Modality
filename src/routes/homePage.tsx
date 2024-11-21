@@ -8,6 +8,15 @@ const HomePage = () => {
     const navigate = useNavigate();
     
     const startStudy = async() => {
+        // Check if token and userID already exists
+        const existingToken = localStorage.getItem("token");
+        const existingUserID = localStorage.getItem("userID");
+        if (existingToken && existingUserID) {
+            console.log("Study already started!");
+            navigate("/instructions");
+            return;
+        }
+
         setLoading(true);
         try {
             const url = "http://localhost:5001/start";
@@ -15,10 +24,12 @@ const HomePage = () => {
             if (res.status === 200) {
                 console.log("Study started successfully!");
                 const token = res.data.token;
-                // Saving the token in local storage
+                const userID = res.data.userID;
+                // Saving the token and userID in local storage
                 localStorage.setItem("token", token);
+                localStorage.setItem("userID", userID);
                 // Navigating to the question page
-                // navigate("/question");
+                navigate("/instructions");
             }
         }
         catch (error) {
@@ -42,4 +53,5 @@ const HomePage = () => {
         </div>
     );
 }
+
 export default HomePage;

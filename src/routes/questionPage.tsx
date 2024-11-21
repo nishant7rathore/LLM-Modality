@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from 'react';
-import Prompt from '../components/prompt';
+import InputPrompt from '../components/inputPrompt';
 import Display from '../components/displayFrame';
+import Question from "../components/questionFrame";
 
 // Define the type of the response object
 type Response = {
@@ -17,9 +18,14 @@ const QuestionPage = () => {
     // Function to send the prompt to the backend
     const sendPrompt = async (inputText: string, isImage: boolean) => {
         console.log("Sending prompt: ", inputText);
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("No token found!");
+            return;
+        }
         try {
             const url = isImage ? "http://localhost:5001/api/dalle" : "http://localhost:5001/api/text";
-            const res = await axios.post(url, {prompt: inputText});
+            const res = await axios.post(url, {prompt: inputText} , {headers: {Authorization: `Bearer ${token}`}});
             if (res.status === 200) {
                 const content = res.data;
                 const type = isImage ? 'image' : 'text';
@@ -34,8 +40,9 @@ const QuestionPage = () => {
     // Return the main App component
     return (
         <div className="App">
+            <Question />
             <Display response = {response} />
-            <Prompt  sendPrompt = {sendPrompt}/>
+            <InputPrompt  sendPrompt = {sendPrompt}/>
         </div>
     );
 }
