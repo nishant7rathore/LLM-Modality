@@ -14,19 +14,20 @@ router.post('/text', authenticateToken, async(req, res) => {
     console.log("Recieved Prompt: ", prompt);
 
     try {
-        // Creation call to OpenAI
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                { role: 'system', content: 'You are a helpful assistant.' },
-                {
-                    role: 'user',
-                    content: prompt,
-                },
-            ]
-        });
-        console.log("Completion: ", completion);
-        response = completion.choices[0].message.content;
+        response = "Text Call is good!";
+        // // Creation call to OpenAI
+        // const completion = await openai.chat.completions.create({
+        //     model: "gpt-4o",
+        //     messages: [
+        //         { role: 'system', content: 'You are a helpful assistant.' },
+        //         {
+        //             role: 'user',
+        //             content: prompt,
+        //         },
+        //     ]
+        // });
+        // console.log("Completion: ", completion);
+        // response = completion.choices[0].message.content;
     }
     catch (error) {
         console.log("Error: ", error);

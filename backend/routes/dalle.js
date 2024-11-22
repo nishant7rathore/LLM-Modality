@@ -14,14 +14,15 @@ router.post('/dalle', authenticateToken, async(req, res) => {
     console.log("Recieved Prompt: ", prompt);
 
     try {
-        // Generate call to OpenAI
-        const response = await openai.images.generate({
-            model: "dall-e-3",
-            prompt: prompt,
-            n: 1,
-            size: "1024x1024",
-        });
-        image_url = response.data[0].url;
+        image_url = "Dalle Call is good!"
+        // // Generate call to OpenAI
+        // const response = await openai.images.generate({
+        //     model: "dall-e-3",
+        //     prompt: prompt,
+        //     n: 1,
+        //     size: "1024x1024",
+        // });
+        // image_url = response.data[0].url;
     }
     catch (error) {
         console.log("Error: ", error);

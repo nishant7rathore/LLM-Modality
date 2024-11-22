@@ -8,6 +8,7 @@ require('dotenv').config();
 const startRoute = require('./routes/start');
 const textRoute = require('./routes/text');
 const dalleRoute = require('./routes/dalle');
+const dbRoute = require('./routes/db');
 
 // Basic configuration
 const port = process.env.PORT || 5001;
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use('/', startRoute);
 app.use('/api', textRoute);
 app.use('/api', dalleRoute);
+app.use('/api', dbRoute);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
