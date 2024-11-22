@@ -10,6 +10,8 @@
   "description": "This is the backend package.json file for the LLM Study project",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.696.0",
+    "@aws-sdk/lib-dynamodb": "^3.698.0",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

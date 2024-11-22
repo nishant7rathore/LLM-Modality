@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export interface StudyData {
     userID: string;
-    questionId: number;
+    questionID: number;
     prompt: string;
     response: string;
     surveyAnswers: any;
@@ -23,7 +23,7 @@ export const StudyProvider = ({ children }: { children: React.ReactNode }) => {
         const storedData = localStorage.getItem("studyData");
         return storedData ? JSON.parse(storedData) : {
             userID: "",
-            questionId: 0,
+            questionID: 0,
             prompt: "",
             response: "",
             surveyAnswers: null

@@ -1,6 +1,5 @@
 // Custom hook to send the study data object to the backend
 import axios from "axios";
-import { useStudyContext } from "../context/studyContext";
 import { useState } from "react";
 
 const useSendStudyData = () => {

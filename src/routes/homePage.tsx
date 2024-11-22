@@ -9,15 +9,6 @@ const HomePage = () => {
     const navigate = useNavigate();
     
     const startStudy = async() => {
-        // // Check if token and userID already exists
-        // const existingToken = localStorage.getItem("token");
-        // const existingUserID = localStorage.getItem("userID");
-        // if (existingToken && existingUserID) {
-        //     console.log("Study already started!");
-        //     navigate("/instructions");
-        //     return;
-        // }
-
         setLoading(true);
         try {
             const url = "http://localhost:5001/start";
