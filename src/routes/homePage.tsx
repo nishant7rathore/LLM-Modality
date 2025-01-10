@@ -6,6 +6,7 @@ import { useStudyContext } from "../context/studyContext";
 const HomePage = () => {
     const { updateStudyData } = useStudyContext();
     const [loading, setLoading] = useState<boolean>(false);
+    const [order, setOrder] = useState<string>("");
     const navigate = useNavigate();
     
     const startStudy = async() => {
@@ -17,6 +18,8 @@ const HomePage = () => {
                 console.log("Study started successfully!");
                 const token = res.data.token;
                 const userID = res.data.userID;
+                const order = res.data.order;
+                setOrder(order);
                 // Saving the token and userID in local storage
                 localStorage.setItem("token", token);
                 localStorage.setItem("userID", userID);
