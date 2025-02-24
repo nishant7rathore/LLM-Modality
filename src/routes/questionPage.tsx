@@ -80,8 +80,6 @@ const QuestionPage = () => {
                 // Update the studyData with prompt and response
                 updateStudyData({ prompt: inputText, response: content });
                 setResponse({ type, content });
-                // Navigate to the survey
-                navigate("/survey");
             }
         }
         catch (error) {
@@ -97,7 +95,7 @@ const QuestionPage = () => {
     return (
         <div className="App">
             <Question question={questions[currentQuestionIndex]} />
-            <Display response = {response} />
+            <Display response = {response} onContinue={() => navigate("/survey")} />
             <InputPrompt  sendPrompt = {sendPrompt}/>
         </div>
     );

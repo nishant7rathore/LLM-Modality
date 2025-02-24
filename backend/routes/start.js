@@ -1,9 +1,8 @@
 // Route to start session
 const express = require('express');
-const { generateToken } = require('../util/jwt');
-const { decodeToken } = require('../util/jwt');
+const { signToken } = require('../util/jwt');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { PutCommand, DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
 require('dotenv').config();
 
 // Basic configuration
@@ -22,7 +21,7 @@ const client = new DynamoDBClient({
 const documentClient = DynamoDBDocumentClient.from(client);
 
 // Order
-const ORDERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const ORDERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 // Function to get the next order
 const getNextOrder = async () => {
@@ -40,11 +39,11 @@ const getNextOrder = async () => {
         };
 
         const getResult = await documentClient.send(new GetCommand(getParams));
-        const currentOrderIndex = getResult.Item ? getResult.Item.orderVal : 0;  // Default to 0 if no item exists
+        const currentCounter = getResult.Item ? getResult.Item.orderVal : 0; // Default to 0 if no item exists
 
-        // Round robin next order
-        const newOrderIndex = (currentOrderIndex + 1) % ORDERS.length;
-        order = ORDERS[newOrderIndex];
+        // Get next order using counter
+        const nextCounter = (currentCounter + 1);
+        order = ORDERS[nextCounter % ORDERS.length];
 
         // Conditional Write - Attempt to update orderIndex
         const putParams = {
@@ -53,12 +52,12 @@ const getNextOrder = async () => {
                 userID: "OrderCount",
                 questionID: "None"
             },
-            UpdateExpression: "SET orderVal = :order",
+            UpdateExpression: "SET orderVal = :nextCounter",
             ExpressionAttributeValues: {
-                ":order": order,
-                ":currentOrderIndex": currentOrderIndex
+                ":nextCounter": nextCounter,
+                ":currentCounter": currentCounter
             },
-            ConditionExpression: "orderVal = :currentOrderIndex",  // Only update if orderIndex hasn't changed
+            ConditionExpression: "orderVal = :currentCounter",  // Only update if hasn't changed
         };
 
         try {
@@ -79,12 +78,11 @@ const getNextOrder = async () => {
 
 // Route to start session
 router.post('/start', async (req, res) => {
-    const token = generateToken();
-    const decoded = decodeToken(token);
-    const userID = decoded.userID;
+    const { PROLIFIC_PID } = req.body;
+    const token = signToken({ PROLIFIC_PID });
     const order = await getNextOrder();
-    console.log("Order: ", order);
-    res.json({ token, userID, order });
+    console.log("Start endpoint logs: ", token, PROLIFIC_PID, order);
+    res.json({ token, userID: PROLIFIC_PID, order });
 });
 
 module.exports = router;

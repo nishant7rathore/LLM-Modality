@@ -25,7 +25,7 @@ router.post('/db', authenticateToken, async (req, res) => {
 
     // Define the parameters
     const params = {
-        TableName: "StudyResponses",
+        TableName: process.env.DDB_TABLE_NAME,
         Item: {
             userID: studyData.userID,
             questionID: studyData.questionID,

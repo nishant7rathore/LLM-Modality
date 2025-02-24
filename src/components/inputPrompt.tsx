@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Props = {
     sendPrompt: (inputText: string) => void;
@@ -33,26 +34,47 @@ const InputPrompt = ({sendPrompt}: Props) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full px-6 py-4 bg-white border-t border-gray-300">
-      <form onSubmit={handleSubmit} className="flex items-center w-full space-x-2">
-        <textarea
-          value={inputText}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          className="flex-grow p-3 border border-gray-300 rounded-md resize-none w-full"
-          placeholder="Build your prompt here..."
-          rows={1}
-        />
-        <button
-          type="submit"
-          disabled={isSent || inputText.trim() === ""}
-          className="p-3 bg-plexBlue text-white rounded-full disabled:bg-gray-400"
-        >
-          <FaArrowUp />
-        </button>
-      </form>
-    </div>
-  );
+    <motion.div 
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-0 left-0 w-full px-6 py-4 bg-white border-t border-gray-300 backdrop-blur-md bg-opacity-90"
+    >
+        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+            <div className="flex items-center space-x-3">
+                <motion.textarea
+                    value={inputText}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    className="flex-grow p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Build your prompt here..."
+                    rows={1}
+                    whileFocus={{ boxShadow: "0 0 0 2px rgba(59, 130, 246, 0.5)" }}
+                />
+                <motion.button
+                    type="submit"
+                    disabled={isSent || inputText.trim() === ""}
+                    className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <AnimatePresence mode="wait">
+                        {isSent ? (
+                            <motion.div
+                                key="loading"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"
+                            />
+                        ) : (
+                            <FaArrowUp className="w-6 h-6" />
+                        )}
+                    </AnimatePresence>
+                </motion.button>
+            </div>
+        </form>
+    </motion.div>
+);
 };
 
 export default InputPrompt;

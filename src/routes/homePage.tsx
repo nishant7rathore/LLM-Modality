@@ -2,22 +2,33 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStudyContext } from "../context/studyContext";
+import { motion } from "framer-motion";
 
 const HomePage = () => {
     const { updateStudyData } = useStudyContext();
     const [loading, setLoading] = useState<boolean>(false);
+    const [prolificId, setProlificId] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     
     const startStudy = async() => {
+        if (!prolificId.trim()) {
+            setError("Please enter your Prolific ID!");
+            return;
+        }
+
         setLoading(true);
+        setError(null);
+
         try {
             const url = "http://localhost:5001/start";
-            const res = await axios.post(url);
+            const res = await axios.post(url, { PROLIFIC_PID: prolificId });
             if (res.status === 200) {
                 console.log("Study started successfully!");
                 const token = res.data.token;
                 const userID = res.data.userID;
                 const order = res.data.order;
+                console.log("Start endpoint response: ", res.data); 
                 // Saving the token, userID, order in local storage
                 localStorage.setItem("token", token);
                 localStorage.setItem("userID", userID);
@@ -27,11 +38,17 @@ const HomePage = () => {
                 // Updating userID in the StudyData context
                 updateStudyData({ userID: userID });
                 // Navigating to the question page
+                console.log("HomePage Logs token: ", token);
+                console.log("HomePage Logs userID: ", userID);
+                console.log("HomePage Logs order: ", order);
+                console.log("HomePage Logs currentQuestionIndex: ", localStorage.getItem("currentQuestionIndex"));
+                console.log("HomePage Logs studyData: ", JSON.parse(localStorage.getItem("studyData") || "{}"));
                 navigate("/instructions");
             }
         }
         catch (error) {
             console.error("Error starting study: ", error);
+            setError("Error starting the study, please try again!");
         } 
         finally {
             setLoading(false);
@@ -39,18 +56,71 @@ const HomePage = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen justify-center items-center">
-            <h1 className="text-4xl font-bold my-6">Welcome to the HCI User Study!</h1>
-            <p className="text-lg mb-4">Click the button below to start the study.</p>
-            <button 
-                onClick={startStudy} 
-                disabled={loading}
-                className="px-6 py-3 bg-plexBlue text-white rounded-md text-lg font-semibold disabled:bg-gray-400 mb-4">
-                {loading ? 'Loading...' : 'Start Study'}
-            </button>
-            <p>Your Token is: {localStorage.getItem("token")}</p>
-            <p>Your UserID is: {localStorage.getItem("userID")}</p>
-        </div>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col min-h-screen justify-center items-center bg-gradient-to-br from-blue-50 to-purple-50"
+        >
+            <motion.h1 
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                className="text-5xl font-bold my-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            >
+                Welcome to the HCI User Study!
+            </motion.h1>
+            <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="w-full max-w-md space-y-6"
+            >
+                <div className="space-y-2">
+                    <label htmlFor="prolificId" className="block text-lg text-gray-700 font-medium">
+                        Enter your Prolific ID
+                    </label>
+                    <motion.input
+                        id="prolificId"
+                        type="text"
+                        value={prolificId}
+                        onChange={(e) => setProlificId(e.target.value)}
+                        whileFocus={{ scale: 1.01 }}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                                 focus:border-transparent transition-all duration-200"
+                        placeholder="Paste your Prolific ID here"
+                    />
+                    {error && (
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-red-500 text-sm"
+                        >
+                            {error}
+                        </motion.p>
+                    )}
+                </div>
+
+                <motion.button 
+                    onClick={startStudy} 
+                    disabled={loading}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg 
+                              text-xl font-semibold disabled:from-gray-400 disabled:to-gray-500 shadow-lg 
+                              hover:shadow-xl transition-all duration-300"
+                >
+                    {loading ? (
+                        <div className="flex items-center justify-center space-x-2">
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                            />
+                            <span>Loading...</span>
+                        </div>
+                    ) : 'Start Study'}
+                </motion.button>
+            </motion.div>
+        </motion.div>
     );
 }
 

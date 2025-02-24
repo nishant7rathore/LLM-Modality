@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStudyContext } from "../context/studyContext";
 import useSendStudyData from "../hooks/sendStudyData";
+import { motion } from "framer-motion";
 
 const SurveyPage = () => {
     const navigate = useNavigate();
@@ -75,61 +76,155 @@ const SurveyPage = () => {
         }
     };
     
+    const pageVariants = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -20 }
+    };
+
+    const questionVariants = {
+        initial: { opacity: 0, x: -20 },
+        animate: { opacity: 1, x: 0 }
+    };
+
     return (
-        <div className="max-w-3xl mx-auto my-4 p-4 border border-gray-300 rounded-md shadow-md">
-            <h1 className="text-xl font-bold mb-4">Survey Page</h1>
-            <form onSubmit={handleSubmit}>
-                {likertQuestions.map((question, index) => (
-                    <div key={index} className="mb-6">
-                        <p className="mb-2">{question}</p>
-                        <input
-                            type="range"
-                            min={1}
-                            max={7}
-                            step={1}
-                            value={likertQs[question] || 4}
-                            onChange={(e) => handleLikertChange(question, parseInt(e.target.value))}
-                            className="w-full"
-                        />
-                        <div className="flex justify-between text-xs mt-1">
-                            <span>Strongly Disagree</span>
-                            <span>Strongly Agree</span>
-                        </div>
-                    </div>
-                ))}
-                {textQuestions.map((question, index) => (
-                    <div key={index} className="mb-6">
-                        <p className="mb-2">{question}</p>
-                        <textarea
-                            rows={3}
-                            onChange={(e) => handleTextChange(question, e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md"
-                        />
-                    </div>
-                ))}
-                {nasaTLXQuestions.map((question, index) => (
-                    <div key={index} className="mb-6">
-                        <p className="mb-2">{question}</p>
-                        <input
-                            type="range"
-                            min={1}
-                            max={7}
-                            step={1}
-                            value={nasaTLXQs[question] || 4}
-                            onChange={(e) => handleNasaTLXChange(question, parseInt(e.target.value))}
-                            className="w-full"
-                        />
-                        <div className="flex justify-between text-xs mt-1">
-                            <span>Very Low</span>
-                            <span>Very High</span>
-                        </div>
-                    </div>
-                ))}
-                <button type="submit" className="px-6 py-3 bg-plexBlue text-white rounded-md text-lg font-semibold">
-                    Submit
-                </button>
-            </form>
-        </div>
+        <motion.div 
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.5 }}
+            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8 px-4"
+        >
+             <motion.div 
+                className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8"
+            >
+                <motion.h1 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                >
+                    Study Survey
+                </motion.h1>
+
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* Likert Scale Questions */}
+                    <motion.section className="space-y-6">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Experience Rating</h2>
+                        {likertQuestions.map((question, index) => (
+                            <motion.div 
+                                key={index}
+                                variants={questionVariants}
+                                initial="initial"
+                                animate="animate"
+                                transition={{ delay: index * 0.1 }}
+                                className="bg-gray-50 rounded-lg p-6 shadow-sm"
+                            >
+                                <p className="mb-4 text-gray-700">{question}</p>
+                                <motion.div className="w-full">
+                                    <input
+                                        type="range"
+                                        min={1}
+                                        max={5}
+                                        step={1}
+                                        value={likertQs[question] || 3}
+                                        onChange={(e) => handleLikertChange(question, parseInt(e.target.value))}
+                                        className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                    <div className="flex justify-between mt-2">
+                                        {[1, 2, 3, 4, 5].map((value) => (
+                                            <div key={value} className="flex flex-col items-center">
+                                                <div className="h-3 w-px bg-gray-300"/>
+                                                <span className="text-sm text-gray-600 mt-1">{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex justify-between text-sm text-gray-600 mt-2">
+                                        <span>Strongly Disagree</span>
+                                        <span>Strongly Agree</span>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        ))}
+                    </motion.section>
+
+                    {/* NASA TLX Questions */}
+                    <motion.section className="space-y-6">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Task Load Assessment</h2>
+                        {nasaTLXQuestions.map((question, index) => (
+                            <motion.div 
+                                key={index}
+                                variants={questionVariants}
+                                initial="initial"
+                                animate="animate"
+                                transition={{ delay: (likertQuestions.length + index) * 0.1 }}
+                                className="bg-gray-50 rounded-lg p-6 shadow-sm"
+                            >
+                                <p className="mb-4 text-gray-700">{question}</p>
+                                <motion.div className="w-full">
+                                    <input
+                                        type="range"
+                                        min={1}
+                                        max={5}
+                                        step={1}
+                                        value={nasaTLXQs[question] || 3}
+                                        onChange={(e) => handleNasaTLXChange(question, parseInt(e.target.value))}
+                                        className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                    <div className="flex justify-between mt-2">
+                                        {[1, 2, 3, 4, 5].map((value) => (
+                                            <div key={value} className="flex flex-col items-center">
+                                                <div className="h-3 w-px bg-gray-300"/>
+                                                <span className="text-sm text-gray-600 mt-1">{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex justify-between text-sm text-gray-600 mt-2">
+                                        <span>Very Low</span>
+                                        <span>Very High</span>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        ))}
+                    </motion.section>
+
+                    {/* Text Questions */}
+                    <motion.section className="space-y-6">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Additional Feedback</h2>
+                        {textQuestions.map((question, index) => (
+                            <motion.div 
+                                key={index}
+                                variants={questionVariants}
+                                initial="initial"
+                                animate="animate"
+                                transition={{ delay: (likertQuestions.length + nasaTLXQuestions.length + index) * 0.1 }}
+                                className="bg-gray-50 rounded-lg p-6 shadow-sm"
+                            >
+                                <p className="mb-4 text-gray-700">{question}</p>
+                                <motion.textarea
+                                    whileFocus={{ scale: 1.01 }}
+                                    rows={4}
+                                    onChange={(e) => handleTextChange(question, e.target.value)}
+                                    className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                    placeholder="Type your answer here..."
+                                />
+                            </motion.div>
+                        ))}
+                    </motion.section>
+
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="submit"
+                        className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg 
+                                 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+                    >
+                        Submit Survey
+                    </motion.button>
+                </form>
+            </motion.div>
+        </motion.div>
     );
 }
 
