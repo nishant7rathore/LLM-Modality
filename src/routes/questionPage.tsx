@@ -63,7 +63,6 @@ const QuestionPage = () => {
     const sendPrompt = async (inputText: string) => {
         console.log("Sending prompt: ", inputText);
         const token = localStorage.getItem("token");
-        console.log("Token Frontend: ", token);
         if (!token) {
             console.error("No token found!");
             return;
@@ -87,6 +86,16 @@ const QuestionPage = () => {
         }
     };
 
+    const handleContinue = () => {
+        // Update the studyData with questionID
+        updateStudyData({ questionID: currentQuestionIndex });
+        // Increment the currentQuestionIndex
+        if (currentQuestionIndex < questions.length - 1) {
+            localStorage.setItem("currentQuestionIndex", (currentQuestionIndex + 1).toString());
+        }
+        navigate("/survey");
+    };
+
     // Return the main App component
     if (loading) {
         return <div>Loading...</div>;
@@ -95,7 +104,7 @@ const QuestionPage = () => {
     return (
         <div className="App">
             <Question question={questions[currentQuestionIndex]} />
-            <Display response = {response} onContinue={() => navigate("/survey")} />
+            <Display response = {response} onContinue={() => handleContinue()} />
             <InputPrompt  sendPrompt = {sendPrompt}/>
         </div>
     );

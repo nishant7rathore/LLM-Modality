@@ -28,7 +28,6 @@ const HomePage = () => {
                 const token = res.data.token;
                 const userID = res.data.userID;
                 const order = res.data.order;
-                console.log("Start endpoint response: ", res.data); 
                 // Saving the token, userID, order in local storage
                 localStorage.setItem("token", token);
                 localStorage.setItem("userID", userID);
@@ -42,7 +41,6 @@ const HomePage = () => {
                 console.log("HomePage Logs userID: ", userID);
                 console.log("HomePage Logs order: ", order);
                 console.log("HomePage Logs currentQuestionIndex: ", localStorage.getItem("currentQuestionIndex"));
-                console.log("HomePage Logs studyData: ", JSON.parse(localStorage.getItem("studyData") || "{}"));
                 navigate("/instructions");
             }
         }

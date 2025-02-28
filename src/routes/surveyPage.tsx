@@ -6,11 +6,8 @@ import { motion } from "framer-motion";
 
 const SurveyPage = () => {
     const navigate = useNavigate();
-    const { studyData, updateStudyData } = useStudyContext();
+    const { studyData, updateStudyData, resetStudyData } = useStudyContext();
     const { sendStudyData } = useSendStudyData();
-    const [likertQs, setLikertQs] = useState<{ [key: string]: number }>({});
-    const [textQs, setTextQs] = useState<{ [key: string]: string }>({});
-    const [nasaTLXQs, setNasaTLXQs] = useState<{ [key: string]: number }>({});
 
     const likertQuestions = [
         "I felt involved in the creation of [text generated OR image generated].",
@@ -42,22 +39,36 @@ const SurveyPage = () => {
         "Frustration: How insecure, discouraged, irritated, stressed, and annoyed were you?"
     ]
 
-    const handleLikertChange = (question: string, value: number) => {
-        setLikertQs(prev => ({ ...prev, [question]: value }));
+    const [likertQs, setLikertQs] = useState<{ [key: number]: number }>(() => {
+        const initialValues: { [key: number]: number } = {};
+        for (let i = 0; i < likertQuestions.length; i++) {
+            initialValues[i] = 3;
+        }
+        return initialValues;
+    });
+    const [textQs, setTextQs] = useState<{ [key: number]: string }>({});
+    const [nasaTLXQs, setNasaTLXQs] = useState<{ [key: number]: number }>(() => {
+        const initialValues: { [key: number]: number } = {};
+        for (let i = 0; i < nasaTLXQuestions.length; i++) {
+            initialValues[i] = 3;
+        }
+        return initialValues;
+    });
+
+    const handleLikertChange = (qIndex: number, value: number) => {
+        setLikertQs(prev => ({ ...prev, [qIndex]: value }));
     };
 
-    const handleTextChange = (question: string, value: string) => {
-        setTextQs(prev => ({ ...prev, [question]: value }));
+    const handleTextChange = (qIndex: number, value: string) => {
+        setTextQs(prev => ({ ...prev, [qIndex]: value }));
     };
 
-    const handleNasaTLXChange = (question: string, value: number) => {
-        setNasaTLXQs(prev => ({ ...prev, [question]: value }));
+    const handleNasaTLXChange = (qIndex: number, value: number) => {
+        setNasaTLXQs(prev => ({ ...prev, [qIndex]: value }));
     }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Likert Questions: ", likertQs);
-        console.log("Text Questions: ", textQs);
         const updatedStudyData = {
             ...studyData,
             surveyAnswers: { likertQs, textQs, nasaTLXQs }
@@ -65,10 +76,12 @@ const SurveyPage = () => {
         updateStudyData(updatedStudyData);
         await sendStudyData(updatedStudyData);
 
+        // Reset the study data after sending
+        resetStudyData();
+
         // Navigate to next question or end of survey
         const currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex") || "0");
-        if (currentQuestionIndex < 2) {
-            localStorage.setItem("currentQuestionIndex", (currentQuestionIndex + 1).toString());
+        if (currentQuestionIndex < 5) {
             navigate("/prompt");
         }
         else {
@@ -128,8 +141,8 @@ const SurveyPage = () => {
                                         min={1}
                                         max={5}
                                         step={1}
-                                        value={likertQs[question] || 3}
-                                        onChange={(e) => handleLikertChange(question, parseInt(e.target.value))}
+                                        value={likertQs[index] || 3}
+                                        onChange={(e) => handleLikertChange(index, parseInt(e.target.value))}
                                         className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
                                     />
                                     <div className="flex justify-between mt-2">
@@ -168,8 +181,8 @@ const SurveyPage = () => {
                                         min={1}
                                         max={5}
                                         step={1}
-                                        value={nasaTLXQs[question] || 3}
-                                        onChange={(e) => handleNasaTLXChange(question, parseInt(e.target.value))}
+                                        value={nasaTLXQs[index] || 3}
+                                        onChange={(e) => handleNasaTLXChange(index, parseInt(e.target.value))}
                                         className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
                                     />
                                     <div className="flex justify-between mt-2">
@@ -205,7 +218,7 @@ const SurveyPage = () => {
                                 <motion.textarea
                                     whileFocus={{ scale: 1.01 }}
                                     rows={4}
-                                    onChange={(e) => handleTextChange(question, e.target.value)}
+                                    onChange={(e) => handleTextChange(index, e.target.value)}
                                     className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                     placeholder="Type your answer here..."
                                 />

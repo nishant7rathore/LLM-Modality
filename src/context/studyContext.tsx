@@ -1,6 +1,6 @@
 // Context file to share data among frontend components to avoid prop drilling
 // Used to send 1 write query to the db instead of multiple at the end of survey each time
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 export interface StudyData {
     userID: string;
@@ -13,35 +13,49 @@ export interface StudyData {
 interface StudyContextType {
     studyData: StudyData;
     updateStudyData: (newData: Partial<StudyData>) => void;
+    resetStudyData: () => void;
 }
 
-// Create the context
-const StudyContext = createContext<StudyContextType | undefined>(undefined);
+// Default study data
+const defaultStudyData: StudyData = {
+    userID: "",
+    questionID: 0,
+    prompt: "",
+    response: "",
+    surveyAnswers: null
+};
 
+// Create the context
+const StudyContext = createContext<StudyContextType>({
+    studyData: defaultStudyData,
+    updateStudyData: () => {},
+    resetStudyData: () => {}
+});
+
+// Methods to update and reset the study data
 export const StudyProvider = ({ children }: { children: React.ReactNode }) => {
-    const [studyData, setStudyData] = useState<StudyData>(() => {
-        const storedData = localStorage.getItem("studyData");
-        return storedData ? JSON.parse(storedData) : {
-            userID: "",
+    const [studyData, setStudyData] = useState<StudyData>(defaultStudyData);
+
+    const updateStudyData = useCallback((newData: Partial<StudyData>) => {
+        setStudyData((prevData) => {
+            const updatedData = { ...prevData, ...newData };
+            console.log("Study Data updated:", updatedData);
+            return updatedData;
+        });
+    }, []);
+
+    const resetStudyData = useCallback(() => {
+        setStudyData((prevData) => ({
+            ...prevData,
             questionID: 0,
             prompt: "",
             response: "",
             surveyAnswers: null
-        };
-    });
-
-    useEffect(() => {
-        localStorage.setItem("studyData", JSON.stringify(studyData));
-    }, [studyData]);
-
-    const updateStudyData = (newData: Partial<StudyData>) => {
-        setStudyData((prevData) => {
-            return { ...prevData, ...newData };
-        });
-    };
+        }));
+    }, []);
 
     return (
-        <StudyContext.Provider value={{ studyData, updateStudyData }}>
+        <StudyContext.Provider value={{ studyData, updateStudyData, resetStudyData }}>
             {children}
         </StudyContext.Provider>
     );
