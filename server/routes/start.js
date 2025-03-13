@@ -81,8 +81,8 @@ router.post('/start', async (req, res) => {
     const { PROLIFIC_PID } = req.body;
     const token = signToken({ PROLIFIC_PID });
     const order = await getNextOrder();
-    console.log("Start endpoint logs: ", token, PROLIFIC_PID, order);
-    res.json({ token, userID: PROLIFIC_PID, order });
+    console.log("Start endpoint logs: ", token, order);
+    res.json({ token, order });
 });
 
 module.exports = router;

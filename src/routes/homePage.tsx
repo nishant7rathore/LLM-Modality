@@ -1,15 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStudyContext } from "../context/studyContext";
 import { motion } from "framer-motion";
+import { usePreventNavigation } from "../hooks/preventNavigation";
 
 const HomePage = () => {
-    const { updateStudyData } = useStudyContext();
     const [loading, setLoading] = useState<boolean>(false);
     const [prolificId, setProlificId] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    usePreventNavigation("Please don't use the browser back button to navigate!");
     
     const startStudy = async() => {
         if (!prolificId.trim()) {
@@ -26,22 +26,23 @@ const HomePage = () => {
             if (res.status === 200) {
                 console.log("Study started successfully!");
                 const token = res.data.token;
-                const userID = res.data.userID;
                 const order = res.data.order;
-                // Saving the token, userID, order in local storage
+                const userID = prolificId;
+                // Saving the token, order in local storage
                 localStorage.setItem("token", token);
-                localStorage.setItem("userID", userID);
                 localStorage.setItem("order", order);
-                // Initializing the currentQuestionIndex to 0
                 localStorage.setItem("currentQuestionIndex", "0");
-                // Updating userID in the StudyData context
-                updateStudyData({ userID: userID });
                 // Navigating to the question page
-                console.log("HomePage Logs token: ", token);
-                console.log("HomePage Logs userID: ", userID);
-                console.log("HomePage Logs order: ", order);
-                console.log("HomePage Logs currentQuestionIndex: ", localStorage.getItem("currentQuestionIndex"));
                 navigate("/instructions");
+
+                // Using localstorage for building a data object to send to the backend
+                localStorage.setItem("studyData", JSON.stringify({
+                    userID: userID,
+                    questionID: 0,
+                    prompt: "",
+                    response: "",
+                    surveyAnswers: null
+                }));
             }
         }
         catch (error) {

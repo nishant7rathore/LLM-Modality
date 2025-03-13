@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
+import { usePreventNavigation } from "../hooks/preventNavigation";
 
 const InstructionsPage = () => {
     const navigate = useNavigate();
@@ -9,6 +10,7 @@ const InstructionsPage = () => {
         "Review the generated content",
         "Complete a short survey after each task"
     ];
+    usePreventNavigation("Please don't use the browser back button to navigate!");
 
     return (
         <motion.div 

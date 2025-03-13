@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStudyContext } from "../context/studyContext";
 import useSendStudyData from "../hooks/sendStudyData";
 import { motion } from "framer-motion";
+import { usePreventNavigation } from "../hooks/preventNavigation";
 
 const SurveyPage = () => {
     const navigate = useNavigate();
-    const { studyData, updateStudyData, resetStudyData } = useStudyContext();
     const { sendStudyData } = useSendStudyData();
+    usePreventNavigation("Please don't use the browser back button to navigate!");
 
     const likertQuestions = [
         "I felt involved in the creation of [text generated OR image generated].",
@@ -46,7 +46,15 @@ const SurveyPage = () => {
         }
         return initialValues;
     });
-    const [textQs, setTextQs] = useState<{ [key: number]: string }>({});
+
+    const [textQs, setTextQs] = useState<{ [key: number]: string }>(() => {
+        const initialValues: { [key: number]: string } = {};
+        for (let i = 0; i < textQuestions.length; i++) {
+            initialValues[i] = "";
+        }
+        return initialValues;
+    });
+
     const [nasaTLXQs, setNasaTLXQs] = useState<{ [key: number]: number }>(() => {
         const initialValues: { [key: number]: number } = {};
         for (let i = 0; i < nasaTLXQuestions.length; i++) {
@@ -69,15 +77,15 @@ const SurveyPage = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const updatedStudyData = {
-            ...studyData,
-            surveyAnswers: { likertQs, textQs, nasaTLXQs }
-        };
-        updateStudyData(updatedStudyData);
-        await sendStudyData(updatedStudyData);
 
-        // Reset the study data after sending
-        resetStudyData();
+        // Store the survey answers in localStorage
+        localStorage.setItem("studyData", JSON.stringify(({
+            ...JSON.parse(localStorage.getItem("studyData") || "{}"),
+            surveyAnswers: { likertQs, textQs, nasaTLXQs }
+        })));
+
+        // Send the whole data for the question to the backend
+        await sendStudyData(localStorage.getItem("studyData"));
 
         // Navigate to next question or end of survey
         const currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex") || "0");
@@ -85,6 +93,11 @@ const SurveyPage = () => {
             navigate("/prompt");
         }
         else {
+            // clear the local storage
+            localStorage.removeItem("studyData");
+            localStorage.removeItem("currentQuestionIndex");
+            localStorage.removeItem("order");
+            localStorage.removeItem("token");
             navigate("/end");
         }
     };

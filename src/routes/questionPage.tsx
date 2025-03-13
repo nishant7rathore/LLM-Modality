@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import InputPrompt from '../components/inputPrompt';
 import Display from '../components/displayFrame';
 import Question from "../components/questionFrame";
-import { useStudyContext } from "../context/studyContext";
+import { usePreventNavigation } from "../hooks/preventNavigation";
 
 // Define the type of the response object
 type Response = {
   type: 'text' | 'image';
   content: string;
+  prompt?: string;
 };
 
 // Define the type of the question object
@@ -21,8 +22,6 @@ type QuestionType = {
 // Define the main App component
 const QuestionPage = () => {
     const navigate = useNavigate();
-    // useStudyContext hook update the studyData with the prompt and response
-    const { updateStudyData } = useStudyContext();
     // useState hook to store the response object
     const [response, setResponse] = useState<Response | null>(null);
     // useState hook to get question
@@ -31,6 +30,7 @@ const QuestionPage = () => {
     const [loading, setLoading] = useState(true);
     // useState hook to get questionIndex
     const currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex") || "0");
+    usePreventNavigation("Please don't use the browser back button to navigate!");
 
     // Function to fetch the question from the backend
     useEffect(() => {
@@ -76,9 +76,7 @@ const QuestionPage = () => {
             if (res.status === 200) {
                 const content = res.data;
                 const type = isImage ? 'image' : 'text';
-                // Update the studyData with prompt and response
-                updateStudyData({ prompt: inputText, response: content });
-                setResponse({ type, content });
+                setResponse({ type, content, prompt: inputText });
             }
         }
         catch (error) {
@@ -87,12 +85,20 @@ const QuestionPage = () => {
     };
 
     const handleContinue = () => {
-        // Update the studyData with questionID
-        updateStudyData({ questionID: currentQuestionIndex });
-        // Increment the currentQuestionIndex
+        // Save the response in the local storage
+        localStorage.setItem("studyData", JSON.stringify({
+            ...JSON.parse(localStorage.getItem("studyData") || "{}"),
+            questionID: currentQuestionIndex,
+            prompt: response?.prompt,
+            response: response?.content
+        }));
+
+        // Increment the currentQuestionIndex and navigate to the survey page
         if (currentQuestionIndex < questions.length - 1) {
             localStorage.setItem("currentQuestionIndex", (currentQuestionIndex + 1).toString());
         }
+        console.log("LocalStorage Data Object:", JSON.parse(localStorage.getItem("studyData") || "{}"));
+
         navigate("/survey");
     };
 

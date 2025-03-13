@@ -9,6 +9,7 @@ type Props = {
 const InputPrompt = ({sendPrompt}: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
+  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -25,11 +26,16 @@ const InputPrompt = ({sendPrompt}: Props) => {
   };
   
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (hasSubmitted) {
+        return;
+    }
+
     setIsSent(true);
-    await sendPrompt(inputText);
-    setInputText("");
+    setHasSubmitted(true);
+    sendPrompt(inputText);
     setIsSent(false);
   };
 
@@ -45,6 +51,7 @@ const InputPrompt = ({sendPrompt}: Props) => {
                     value={inputText}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
+                    disabled={hasSubmitted}
                     className="flex-grow p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Build your prompt here..."
                     rows={1}
@@ -52,7 +59,7 @@ const InputPrompt = ({sendPrompt}: Props) => {
                 />
                 <motion.button
                     type="submit"
-                    disabled={isSent || inputText.trim() === ""}
+                    disabled={hasSubmitted || inputText.trim() === ""}
                     className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
