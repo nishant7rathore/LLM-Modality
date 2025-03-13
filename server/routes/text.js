@@ -1,6 +1,6 @@
 // API route for gpt-text calls
 const express = require('express');
-const { OpenAI } = require('openai/index.mjs');
+const { OpenAI } = require('openai');
 const authenticateToken = require('../middleware/auth');
 require('dotenv').config();
 

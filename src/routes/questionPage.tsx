@@ -102,7 +102,7 @@ const QuestionPage = () => {
     }
     
     return (
-        <div className="App">
+        <div className="App min-h-screen">
             <Question question={questions[currentQuestionIndex]} />
             <Display response = {response} onContinue={() => handleContinue()} />
             <InputPrompt  sendPrompt = {sendPrompt}/>
