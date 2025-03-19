@@ -12,7 +12,7 @@ const Question = ({ question }: { question: QuestionType }) => {
             initial="hidden"
             animate="visible"
             variants={fadeIn}
-            className="max-w-3xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg"
+            className="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg"
         >
             <motion.h1 
                 variants={slideUp}

@@ -63,6 +63,7 @@ const QuestionPage = () => {
     const sendPrompt = async (inputText: string) => {
         console.log("Sending prompt: ", inputText);
         const token = localStorage.getItem("token");
+        const order = localStorage.getItem("order");
         if (!token) {
             console.error("No token found!");
             return;
@@ -71,8 +72,9 @@ const QuestionPage = () => {
             const currentQuestion = questions[currentQuestionIndex];
             const isImage = currentQuestion.type === 'image';
             const url = isImage ? "http://localhost:5001/api/dalle" : "http://localhost:5001/api/text";
+            const payload = isImage ? { prompt: inputText, questionID: currentQuestionIndex, order: order } : { prompt: inputText };
 
-            const res = await axios.post(url, {prompt: inputText} , {headers: {Authorization: `Bearer ${token}`}});
+            const res = await axios.post(url, payload , {headers: {Authorization: `Bearer ${token}`}});
             if (res.status === 200) {
                 const content = res.data;
                 const type = isImage ? 'image' : 'text';
@@ -108,10 +110,10 @@ const QuestionPage = () => {
     }
     
     return (
-        <div className="App min-h-screen">
-            <Question question={questions[currentQuestionIndex]} />
-            <Display response = {response} onContinue={() => handleContinue()} />
-            <InputPrompt  sendPrompt = {sendPrompt}/>
+        <div className="App min-h-screen pb-32">
+            <Question question = {questions[currentQuestionIndex]} />
+            <Display response = {response} />
+            <InputPrompt  sendPrompt = {sendPrompt} onContinue = {() => handleContinue()} responseGenerated = {response !== null}/>
         </div>
     );
 }

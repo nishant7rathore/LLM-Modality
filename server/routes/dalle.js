@@ -20,8 +20,12 @@ const s3Client = new S3Client({
 });
 
 router.post('/dalle', authenticateToken, async(req, res) => {
-    const { prompt } = req.body;
-    const userID = req.user.userID;
+    console.log("Request: ", req.body);
+    const prompt = req.body.prompt;
+    const order = req.body.order;
+    const questionID = req.body.questionID;
+    const userID = req.user.PROLIFIC_PID;
+
     console.log("Recieved Prompt dalle.js: ", prompt);
     console.log("User ID dalle.js: ", userID);
 
@@ -34,31 +38,31 @@ router.post('/dalle', authenticateToken, async(req, res) => {
             size: "1024x1024",
         });
 
-        const imageUrl = response.data[0].url;
-        console.log("Image URL: ", imageUrl);
+        const imageViewUrl = response.data[0].url;
+        console.log("Image URL: ", imageViewUrl);
 
         // Download the image from DALL-E
-        const imageResponse = await fetch(imageUrl);
+        const imageResponse = await fetch(imageViewUrl);
         const imageBuffer = await imageResponse.arrayBuffer();
 
         // Generate unique filename
-        const fileName = `${userID}-${Date.now()}.png`;
+        const fileName = `${userID}-${order}-${questionID}-${Date.now()}.png`;
 
         // Upload the image to S3
         const uploadParams = {
             Bucket: process.env.S3_BUCKET_NAME,
             Key: fileName,
             Body: Buffer.from(imageBuffer),
-            ContentType: 'image/png',
+            ContentType: 'image/png'
         };
         
         await s3Client.send(new PutObjectCommand(uploadParams));
 
         // Generate the URL for the image
-        const image_url = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
+        const image_url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
         console.log("Image URL: ", image_url);
 
-        res.json(imageUrl);
+        res.json(image_url);
     }
     catch (error) {
         console.log("Error: ", error);

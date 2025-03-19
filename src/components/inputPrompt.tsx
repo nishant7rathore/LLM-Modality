@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Props = {
     sendPrompt: (inputText: string) => void;
+    onContinue: () => void;
+    responseGenerated: boolean;
 };
 
-const InputPrompt = ({sendPrompt}: Props) => {
+const InputPrompt = ({sendPrompt, onContinue, responseGenerated}: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
@@ -45,8 +47,8 @@ const InputPrompt = ({sendPrompt}: Props) => {
         animate={{ y: 0 }}
         className="fixed bottom-0 left-0 w-full px-6 py-4 bg-white border-t border-gray-300 backdrop-blur-md bg-opacity-90"
     >
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-            <div className="flex items-center space-x-3">
+        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+            <div className="flex items-center space-x-6">
                 <motion.textarea
                     value={inputText}
                     onChange={handleChange}
@@ -78,6 +80,21 @@ const InputPrompt = ({sendPrompt}: Props) => {
                         )}
                     </AnimatePresence>
                 </motion.button>
+
+                {responseGenerated && hasSubmitted && (
+                    <motion.button
+                        onClick={onContinue}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 
+                                 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                    >
+                        Continue to Survey
+                    </motion.button>
+                )}
             </div>
         </form>
     </motion.div>

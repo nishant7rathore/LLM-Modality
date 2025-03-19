@@ -4,31 +4,31 @@ const authenticateToken = require('../middleware/auth');
 
 const QUESTIONS = {
     0: [
-        { text: "Question 1.1", type: "text" },
-        { text: "Question 1.2", type: "text" },
-        { text: "Question 1.3", type: "text" },
+        { text: "Question 1.1", type: "image" },
+        { text: "Question 1.2", type: "image" },
+        { text: "Question 1.3", type: "image" },
         { text: "Question 1.4", type: "text" },
         { text: "Question 1.5", type: "text" },
     ],
     1: [
         { text: "Question 2.1", type: "text" },
-        { text: "Question 2.2", type: "text" },
-        { text: "Question 2.3", type: "text" },
+        { text: "Question 2.2", type: "image" },
+        { text: "Question 2.3", type: "image" },
         { text: "Question 2.4", type: "text" },
         { text: "Question 2.5", type: "text" },
     ],
     2: [
         { text: "Question 3.1", type: "text" },
         { text: "Question 3.2", type: "text" },
-        { text: "Question 3.3", type: "text" },
+        { text: "Question 3.3", type: "image" },
         { text: "Question 3.4", type: "text" },
         { text: "Question 3.5", type: "text" },
     ],
     3: [
         { text: "Question 4.1", type: "text" },
         { text: "Question 4.2", type: "text" },
-        { text: "Question 4.3", type: "text" },
-        { text: "Question 4.4", type: "text" },
+        { text: "Question 4.3", type: "image" },
+        { text: "Question 4.4", type: "image" },
         { text: "Question 4.5", type: "text" },
     ],
     4: [
