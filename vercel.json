@@ -9,5 +9,10 @@
           "buildCommand": "npm run build"
         }
       }
-    ]
+    ],
+    "routes": [
+    { "src": "^/static/(.*)", "dest": "/static/$1" },
+    { "src": "^/(.*\\.(js|json|css|ico|png|jpg|svg|ttf|woff|woff2))$", "dest": "/$1" },
+    { "src": "^/(.*)", "dest": "/index.html" }
+  ]
   }
