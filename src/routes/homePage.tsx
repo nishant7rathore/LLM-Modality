@@ -22,6 +22,7 @@ const HomePage = () => {
 
         try {
             const url = `${process.env.BACKEND_HOST_URL}/start`;
+            console.log("What is the url: ", url);
             const res = await axios.post(url, { PROLIFIC_PID: prolificId });
             if (res.status === 200) {
                 console.log("Study started successfully!");
