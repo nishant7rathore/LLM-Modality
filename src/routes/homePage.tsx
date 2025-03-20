@@ -21,7 +21,7 @@ const HomePage = () => {
         setError(null);
 
         try {
-            const url = `${process.env.BACKEND_HOST_URL}/start`;
+            const url = `${process.env.REACT_APP_BACKEND_HOST_URL}/start`;
             console.log("What is the url: ", url);
             const res = await axios.post(url, { PROLIFIC_PID: prolificId });
             if (res.status === 200) {
