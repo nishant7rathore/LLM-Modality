@@ -21,7 +21,7 @@ const HomePage = () => {
         setError(null);
 
         try {
-            const url = "http://localhost:5001/start";
+            const url = `${process.env.BACKEND_HOST_URL}/start`;
             const res = await axios.post(url, { PROLIFIC_PID: prolificId });
             if (res.status === 200) {
                 console.log("Study started successfully!");

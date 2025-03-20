@@ -42,7 +42,7 @@ const QuestionPage = () => {
                 return;
             }
             try {
-                const url = `http://localhost:5001/api/questions?order=${order}`;
+                const url = `${process.env.BACKEND_HOST_URL}/api/questions?order=${order}`;
                 const res = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
                 if (res.data.questions) {
                     setQuestions(res.data.questions);
@@ -71,7 +71,7 @@ const QuestionPage = () => {
         try {
             const currentQuestion = questions[currentQuestionIndex];
             const isImage = currentQuestion.type === 'image';
-            const url = isImage ? "http://localhost:5001/api/dalle" : "http://localhost:5001/api/text";
+            const url = isImage ? `${process.env.BACKEND_HOST_URL}/api/dalle` : `${process.env.BACKEND_HOST_URL}/api/text`;
             const payload = isImage ? { prompt: inputText, questionID: currentQuestionIndex, order: order } : { prompt: inputText };
 
             const res = await axios.post(url, payload , {headers: {Authorization: `Bearer ${token}`}});

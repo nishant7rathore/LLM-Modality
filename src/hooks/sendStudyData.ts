@@ -11,7 +11,7 @@ const useSendStudyData = () => {
         setError(null);
         console.log("Sending study data customHook: ", studyData);
         try {
-            const url = "http://localhost:5001/api/db";
+            const url = `${process.env.BACKEND_HOST_URL}/api/db`;
             const token = localStorage.getItem("token");
             if (!token) {
                 throw new Error("No token found!");
