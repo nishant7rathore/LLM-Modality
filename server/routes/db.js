@@ -28,7 +28,8 @@ router.post('/db', authenticateToken, async (req, res) => {
         TableName: process.env.DDB_TABLE_NAME,
         Item: {
             userID: studyData.userID,
-            questionID: studyData.questionID,
+            // convert questionID to string
+            questionID: studyData.questionID.toString(),
             prompt: studyData.prompt,
             response: studyData.response,
             surveyAnswers: studyData.surveyAnswers,

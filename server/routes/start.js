@@ -42,8 +42,8 @@ const getNextOrder = async () => {
         const currentCounter = getResult.Item ? getResult.Item.orderVal : 0; // Default to 0 if no item exists
 
         // Get next order using counter
+        order = ORDERS[currentCounter % ORDERS.length];
         const nextCounter = (currentCounter + 1);
-        order = ORDERS[nextCounter % ORDERS.length];
 
         // Conditional Write - Attempt to update orderIndex
         const putParams = {

@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeIn } from '../transitions';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type ResponseType = {
     type: 'text' | 'image';
@@ -8,9 +10,11 @@ type ResponseType = {
 
 type Props = {
     response: ResponseType | null;
+    isLoading?: boolean;
 };
   
-const Display = ({ response }: Props) => {
+// Display component to show the response
+const Display = ({ response, isLoading = false }: Props) => {
     return (
         <motion.div 
             initial="hidden"
@@ -38,15 +42,45 @@ const Display = ({ response }: Props) => {
                                 />
                             </div>
                         ) : (
-                            <motion.p 
-                                className="text-lg text-gray-700 leading-relaxed"
+                            <motion.div
+                                className="text-lg text-gray-700 leading-relaxed prose prose-sm lg:prose-base dark:prose-invert"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.5, delay: 0.2 }}
                             >
-                                {response.content}
-                            </motion.p>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {response.content}
+                                </ReactMarkdown>
+                            </motion.div>
                         )}
+                    </motion.div>
+                ) : isLoading ? (
+                    <motion.div
+                        className="flex flex-col items-center justify-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <div className="relative h-16 w-80">
+                            {[...Array(5)].map((_, i) => (
+                                <motion.div
+                                    key={i}
+                                    className="absolute top-0 h-4 w-4 rounded-full bg-gradient-to-r from-blue-400 to-purple-600"
+                                    initial={{ x: 0 }}
+                                    animate={{
+                                        x: [0, 320, 0],
+                                        scale: [1, 1.5, 1],
+                                        opacity: [0.5, 1, 0.5]
+                                    }}
+                                    transition={{
+                                        duration: 2.5,
+                                        repeat: Infinity,
+                                        delay: i * 0.2,
+                                        ease: "easeInOut"
+                                    }}
+                                />
+                            ))}
+                        </div>
                     </motion.div>
                 ) : (
                     <motion.p 

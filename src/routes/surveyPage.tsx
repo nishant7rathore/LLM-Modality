@@ -4,6 +4,7 @@ import useSendStudyData from "../hooks/sendStudyData";
 import { motion } from "framer-motion";
 import { usePreventNavigation } from "../hooks/preventNavigation";
 
+// Main Survey Page component
 const SurveyPage = () => {
     const navigate = useNavigate();
     const { sendStudyData } = useSendStudyData();
@@ -39,6 +40,7 @@ const SurveyPage = () => {
         "Frustration: How insecure, discouraged, irritated, stressed, and annoyed were you?"
     ]
 
+    // Setting up initial state for the survey questions
     const [likertQs, setLikertQs] = useState<{ [key: number]: number }>(() => {
         const initialValues: { [key: number]: number } = {};
         for (let i = 0; i < likertQuestions.length; i++) {
@@ -87,7 +89,7 @@ const SurveyPage = () => {
         // Send the whole data for the question to the backend
         await sendStudyData(localStorage.getItem("studyData"));
 
-        // Navigate to next question or end of survey
+        // Navigate to next question or end of survey (HARDCODED TO 5 QUESTIONS)
         const currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex") || "0");
         if (currentQuestionIndex < 5) {
             navigate("/prompt");

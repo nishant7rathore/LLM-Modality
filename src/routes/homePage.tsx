@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { usePreventNavigation } from "../hooks/preventNavigation";
 
+// Main Home Page component
 const HomePage = () => {
+    // useState hook to store loading, prolificId and error state
     const [loading, setLoading] = useState<boolean>(false);
     const [prolificId, setProlificId] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
@@ -22,10 +24,9 @@ const HomePage = () => {
 
         try {
             const url = `${process.env.REACT_APP_BACKEND_HOST_URL}/start`;
-            console.log("What is the url: ", url);
             const res = await axios.post(url, { PROLIFIC_PID: prolificId });
             if (res.status === 200) {
-                console.log("Study started successfully!");
+                // console.log("Study started successfully!");
                 const token = res.data.token;
                 const order = res.data.order;
                 const userID = prolificId;

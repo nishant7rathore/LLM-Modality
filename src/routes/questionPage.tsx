@@ -17,19 +17,18 @@ type Response = {
 type QuestionType = {
     text: string;
     type: 'text' | 'image';
+    content: string;
 };
 
-// Define the main App component
+// Main Question Page component
 const QuestionPage = () => {
-    const navigate = useNavigate();
-    // useState hook to store the response object
+    // useState hooks to store the response, questions, loading and responseLoading state
     const [response, setResponse] = useState<Response | null>(null);
-    // useState hook to get question
     const [questions, setQuestions] = useState<QuestionType[]>([]);
-    // useState hook to store loading state
     const [loading, setLoading] = useState(true);
-    // useState hook to get questionIndex
+    const [responseLoading, setResponseLoading] = useState(false);
     const currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex") || "0");
+    const navigate = useNavigate();
     usePreventNavigation("Please don't use the browser back button to navigate!");
 
     // Function to fetch the question from the backend
@@ -61,7 +60,6 @@ const QuestionPage = () => {
 
     // Function to send the prompt to the backend
     const sendPrompt = async (inputText: string) => {
-        console.log("Sending prompt: ", inputText);
         const token = localStorage.getItem("token");
         const order = localStorage.getItem("order");
         if (!token) {
@@ -69,6 +67,7 @@ const QuestionPage = () => {
             return;
         }
         try {
+            setResponseLoading(true);
             const currentQuestion = questions[currentQuestionIndex];
             const isImage = currentQuestion.type === 'image';
             const url = isImage ? `${process.env.REACT_APP_BACKEND_HOST_URL}/api/dalle` : `${process.env.REACT_APP_BACKEND_HOST_URL}/api/text`;
@@ -83,6 +82,9 @@ const QuestionPage = () => {
         }
         catch (error) {
             console.error("Error sending prompt: ", error);
+        }
+        finally {
+            setResponseLoading(false);
         }
     };
 
@@ -99,20 +101,23 @@ const QuestionPage = () => {
         if (currentQuestionIndex < questions.length - 1) {
             localStorage.setItem("currentQuestionIndex", (currentQuestionIndex + 1).toString());
         }
-        console.log("LocalStorage Data Object:", JSON.parse(localStorage.getItem("studyData") || "{}"));
+        // console.log("LocalStorage Data Object:", JSON.parse(localStorage.getItem("studyData") || "{}"));
 
         navigate("/survey");
     };
 
-    // Return the main App component
+    // Loading spinner
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+            </div>)
     }
     
     return (
         <div className="App min-h-screen pb-32">
             <Question question = {questions[currentQuestionIndex]} />
-            <Display response = {response} />
+            <Display response = {response} isLoading = {responseLoading} />
             <InputPrompt  sendPrompt = {sendPrompt} onContinue = {() => handleContinue()} responseGenerated = {response !== null}/>
         </div>
     );

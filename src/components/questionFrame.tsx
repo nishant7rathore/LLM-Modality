@@ -4,8 +4,10 @@ import { fadeIn, slideUp } from '../transitions';
 type QuestionType = {
     text: string;
     type: 'text' | 'image';
+    content: string;
 };
 
+// Question component to show the question
 const Question = ({ question }: { question: QuestionType }) => {
     return (
         <motion.div 
@@ -18,7 +20,7 @@ const Question = ({ question }: { question: QuestionType }) => {
                 variants={slideUp}
                 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
             >
-                Your Challenge
+                Build the prompt
             </motion.h1>
             <motion.div 
                 variants={slideUp}
@@ -28,6 +30,9 @@ const Question = ({ question }: { question: QuestionType }) => {
                 <span className="inline-block px-3 py-1 mt-2 bg-blue-100 text-blue-800 rounded-full text-sm">
                     {question.type === 'text' ? '🖊 Text Generation' : '🎨 Image Generation'}
                 </span>
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-gray-800 whitespace-pre-wrap">{question.content}</p>
+                </div>
             </motion.div>
         </motion.div>
     );

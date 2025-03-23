@@ -6,7 +6,7 @@ import InstructionsPage from './routes/instructionsPage';
 import SurveyPage from './routes/surveyPage';
 import EndPage from './routes/endPage';
 
-// Define the main App component
+// Main App component with routes
 const App = () => {
   return (
     <Router>

@@ -8,6 +8,7 @@ type Props = {
     responseGenerated: boolean;
 };
 
+// InputPrompt component - Input bar
 const InputPrompt = ({sendPrompt, onContinue, responseGenerated}: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
@@ -27,7 +28,6 @@ const InputPrompt = ({sendPrompt, onContinue, responseGenerated}: Props) => {
     setInputText(event.target.value);
   };
   
-
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -98,7 +98,7 @@ const InputPrompt = ({sendPrompt, onContinue, responseGenerated}: Props) => {
             </div>
         </form>
     </motion.div>
-);
+  );
 };
 
 export default InputPrompt;
