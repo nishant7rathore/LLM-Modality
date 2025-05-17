@@ -24,7 +24,8 @@
      - IAM user with AmazonS3FullAccess, AmazonDynamoDBFullAccess, IAMReadOnlyAccess (optional)
      - S3 bucket settings - Uncheck "Block public and cross-account access to buckets and objects through any public bucket or access point policies"
      - Also, make sure the S3 bucket policy is set correctly under the permission tab:
-       ``` {
+       ```bash
+        {
          "Version": "2012-10-17",
          "Statement": [
              {
@@ -35,7 +36,8 @@
                  "Resource": "arn:aws:s3:::llm-modaility-images-mbmcb88xutrm8gdu/*"
              }
          ]
-     } ```
+       }
+       ```
      - DynamoDB - Check the database schema below. Also, add an OrderCount Item with an attribute 'orderval' set to 0 for init.
  
  ### Environment Setup
