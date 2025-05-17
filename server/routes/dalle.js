@@ -65,8 +65,8 @@ router.post('/dalle', authenticateToken, async(req, res) => {
         res.json(image_url);
     }
     catch (error) {
-        console.log("Error: ", error);
-        image_url = "I am sorry, Something went wrong!";
+        const errorMessage = "I am sorry, Something went wrong!";
+        console.log("Error:" + errorMessage + "- ", error);
     }
 });
 

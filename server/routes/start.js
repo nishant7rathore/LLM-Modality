@@ -31,7 +31,7 @@ const getNextOrder = async () => {
     while (!success) {
         // Retrieve the current order index
         const getParams = {
-            TableName: "StudyResponses",
+            TableName: process.env.DDB_TABLE_NAME,
             Key: { 
                 userID: "OrderCount",
                 questionID: "None"
@@ -47,7 +47,7 @@ const getNextOrder = async () => {
 
         // Conditional Write - Attempt to update orderIndex
         const putParams = {
-            TableName: "StudyResponses",
+            TableName: process.env.DDB_TABLE_NAME,
             Key: { 
                 userID: "OrderCount",
                 questionID: "None"
