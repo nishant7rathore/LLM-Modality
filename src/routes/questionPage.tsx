@@ -98,7 +98,7 @@ const QuestionPage = () => {
         }));
 
         // Increment the currentQuestionIndex and navigate to the survey page
-        if (currentQuestionIndex < questions.length - 1) {
+        if (currentQuestionIndex <= questions.length - 1) {
             localStorage.setItem("currentQuestionIndex", (currentQuestionIndex + 1).toString());
         }
         // console.log("LocalStorage Data Object:", JSON.parse(localStorage.getItem("studyData") || "{}"));
