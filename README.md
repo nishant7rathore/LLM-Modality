@@ -23,7 +23,20 @@
  - **AWS**:
      - IAM user with AmazonS3FullAccess, AmazonDynamoDBFullAccess, IAMReadOnlyAccess (optional)
      - S3 bucket settings - Uncheck "Block public and cross-account access to buckets and objects through any public bucket or access point policies"
-     - DynamoDB - Check the database schema below. Also add a OrderCount with orderval set to 0 for init.
+     - Also, make sure the S3 bucket policy is set correctly under the permission tab:
+       {
+         "Version": "2012-10-17",
+         "Statement": [
+             {
+                 "Sid": "PublicReadGetObject",
+                 "Effect": "Allow",
+                 "Principal": "*",
+                 "Action": "s3:GetObject",
+                 "Resource": "arn:aws:s3:::llm-modaility-images-mbmcb88xutrm8gdu/*"
+             }
+         ]
+     }
+     - DynamoDB - Check the database schema below. Also, add an OrderCount Item with an attribute 'orderval' set to 0 for init.
  
  ### Environment Setup
  
