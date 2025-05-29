@@ -72,10 +72,11 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
     sendPrompt(inputText);
     setIsSent(false);
     setIsRunning(true);
+    setTimeLeft(45);
   };
 
   const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setIsRunning(false);
+    setIsRunning(!isRunning);
   };
 
   const HandleMicButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -154,7 +155,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
 
           {responseGenerated && hasSubmitted && (
             <motion.button
-              onClick={isRunning ? onPause : onContinue}
+              onClick={isRunning || timeLeft > 0 ? onPause : onContinue}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -163,7 +164,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
               className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 
                                  text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
             >
-              {isRunning && timeLeft > 0
+              {isRunning || timeLeft > 0
                 ? `Time Left: ${timeLeft}s`
                 : "Continue to Survey"}
             </motion.button>
