@@ -16,6 +16,8 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
   const [isSent, setIsSent] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   let [hasListened, setHasListened] = useState<boolean>(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(45);
 
   const {
     transcript,
@@ -29,7 +31,16 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
     if (listening) {
       setInputText(finalTranscript);
     }
-  }, [listening, finalTranscript]);
+    let timer: string | number | NodeJS.Timeout | undefined;
+    if (isRunning && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsRunning(false);
+    }
+    return () => clearInterval(timer);
+  }, [listening, finalTranscript, isRunning, timeLeft]);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -60,6 +71,11 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
     setHasSubmitted(true);
     sendPrompt(inputText);
     setIsSent(false);
+    setIsRunning(true);
+  };
+
+  const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setIsRunning(false);
   };
 
   const HandleMicButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,6 +88,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
       setInputText(finalTranscript);
       sendPrompt(transcript);
       setIsSent(false);
+      setIsRunning(true);
     }
     setHasListened(!hasListened);
   };
@@ -137,7 +154,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
 
           {responseGenerated && hasSubmitted && (
             <motion.button
-              onClick={onContinue}
+              onClick={isRunning ? onPause : onContinue}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -146,7 +163,9 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
               className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 
                                  text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
             >
-              Continue to Survey
+              {isRunning && timeLeft > 0
+                ? `Time Left: ${timeLeft}s`
+                : "Continue to Survey"}
             </motion.button>
           )}
         </div>
