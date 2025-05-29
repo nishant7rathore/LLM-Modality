@@ -22,7 +22,7 @@ const useSendStudyData = () => {
                     "Content-Type": "application/json"
                 } 
             });
-            // console.log("Response from backend: ", response);
+              console.log("Response from backend: ", response);
         } 
         catch (error: any) {
             console.error("Error sending study data: ", error);
