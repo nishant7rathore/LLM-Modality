@@ -8,10 +8,11 @@ type Props = {
   sendPrompt: (inputText: string) => void;
   onContinue: () => void;
   responseGenerated: boolean;
+  modality: string;
 };
 
 // InputPrompt component - Input bar
-const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
+const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
@@ -120,6 +121,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
             className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            hidden={modality === "voice"}
           >
             <AnimatePresence mode="wait">
               {isSent ? (
@@ -143,12 +145,13 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated }: Props) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={HandleMicButtonClick}
+            hidden={modality === "type"}
           >
             <AnimatePresence mode="sync">
-              {isSent ? (
-                <FaMicrophoneSlash className="w-6 h-6" />
-              ) : (
+              {hasListened ? (
                 <FaMicrophone className="w-6 h-6" />
+              ) : (
+                <FaMicrophoneSlash className="w-6 h-6" />
               )}
             </AnimatePresence>
           </motion.button>

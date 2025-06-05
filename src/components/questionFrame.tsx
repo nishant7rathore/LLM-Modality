@@ -4,6 +4,7 @@ import { fadeIn, slideUp } from '../transitions';
 type QuestionType = {
     text: string;
     type: 'text' | 'image';
+    modality: 'type' | 'voice';
     content: string;
 };
 
