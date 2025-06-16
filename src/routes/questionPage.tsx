@@ -36,12 +36,13 @@ const QuestionPage = () => {
 
   // Function to fetch the question from the backend
   useEffect(() => {
+    
     const fetchQuestions = async () => {
       const order = localStorage.getItem("order");
       const token = localStorage.getItem("token");
       if (!order) {
         console.error("No order found!");
-        return;
+        return null;
       }
       try {
         const url = `${process.env.REACT_APP_BACKEND_HOST_URL}/api/questions?order=${order}`;
@@ -62,23 +63,25 @@ const QuestionPage = () => {
   }, []);
 
   // Function to send the prompt to the backend
-  const sendPrompt = async (inputText: string) => {
+  const sendPrompt = async (inputText: string, oldResponse: string): Promise<Response | null> => {
     const token = localStorage.getItem("token");
     const order = localStorage.getItem("order");
+    let result: Response | null = null;
     if (!token) {
       console.error("No token found!");
-      return;
+      return null;
     }
     try {
       setResponseLoading(true);
+      setResponse(null);
       const currentQuestion = questions[currentQuestionIndex];
       const isImage = currentQuestion.type === "image";
       const url = isImage
         ? `${process.env.REACT_APP_BACKEND_HOST_URL}/api/dalle`
         : `${process.env.REACT_APP_BACKEND_HOST_URL}/api/text`;
       const payload = isImage
-        ? { prompt: inputText, questionID: currentQuestionIndex, order: order }
-        : { prompt: inputText };
+        ? { prompt: inputText, questionID: currentQuestionIndex, order: order, oldResponse: oldResponse }
+        : { prompt: inputText, oldResponse: oldResponse };
 
       const res = await axios.post(url, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -87,11 +90,13 @@ const QuestionPage = () => {
         const content = res.data;
         const type = isImage ? "image" : "text";
         setResponse({ type, content, prompt: inputText });
+        result = { type, content, prompt: inputText };
       }
     } catch (error) {
       console.error("Error sending prompt: ", error);
     } finally {
       setResponseLoading(false);
+      return result; // Return the response for further processing if needed
     }
   };
 
@@ -118,7 +123,7 @@ const QuestionPage = () => {
     }
     // console.log("LocalStorage Data Object:", JSON.parse(localStorage.getItem("studyData") || "{}"));
 
-    navigate("/survey");
+    //navigate("/survey");
   };
 
   // Loading spinner
@@ -135,9 +140,12 @@ const QuestionPage = () => {
       <Question question={questions[currentQuestionIndex]} />
       <Display response={response} isLoading={responseLoading} />
       <InputPrompt
-        sendPrompt={sendPrompt}
+        sendPrompt={(inputText: string, oldPrompt: string) => sendPrompt(inputText, oldPrompt)}
         onContinue={() => handleContinue()}
-        responseGenerated={response !== null} modality={questions[currentQuestionIndex].modality}/>
+        responseGenerated={response !== null}
+        modality={questions[currentQuestionIndex].modality}
+        response={response}
+      />
     </div>
   );
 };

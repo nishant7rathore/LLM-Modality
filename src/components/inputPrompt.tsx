@@ -4,21 +4,32 @@ import { motion, AnimatePresence } from "framer-motion";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+
+type ResponseType = {
+    type: 'text' | 'image';
+    content: string;
+};
+
+
 type Props = {
-  sendPrompt: (inputText: string) => void;
+  sendPrompt: (inputText: string, oldPrompt: string) => Promise<ResponseType | null | undefined>;
   onContinue: () => void;
   responseGenerated: boolean;
   modality: string;
+  response: ResponseType | null;
+  isLoading?: boolean;
 };
+
 
 // InputPrompt component - Input bar
 const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Props) => {
   const [inputText, setInputText] = useState<string>("");
+  const [oldResponse, setOldResponse] = useState<string>("");
   const [isSent, setIsSent] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
-  let [hasListened, setHasListened] = useState<boolean>(false);
+  const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(45);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   const {
     transcript,
@@ -59,6 +70,10 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
+    if (hasSubmitted) {
+      setHasSubmitted(false);
+      setIsSent(false);
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -70,10 +85,18 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
 
     setIsSent(true);
     setHasSubmitted(true);
-    sendPrompt(inputText);
+    let res = sendPrompt(inputText, oldResponse);
+    res.then((response) => {
+      if (response) {
+        setOldResponse(response.content);
+        console.log("Response received: ", response);
+      } else {
+        console.error("No response received from sendPrompt");
+      }
+    });
     setIsSent(false);
     setIsRunning(true);
-    setTimeLeft(45);
+    setTimeLeft(300); // Reset time left to 5 minutes (300 seconds)
   };
 
   const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -88,7 +111,15 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
       setIsSent(true);
       setHasSubmitted(true);
       setInputText(finalTranscript);
-      sendPrompt(transcript);
+      let res = sendPrompt(transcript, oldResponse);
+      res.then((response) => {
+        if (response) {
+           setOldResponse(response.content);
+          console.log("Response received: ", response);
+        } else {
+          console.error("No response received from sendPrompt");
+        }
+      });
       setIsSent(false);
       setIsRunning(true);
     }
@@ -107,7 +138,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
             value={inputText}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            disabled={hasSubmitted}
+            disabled={timeLeft <= 0}
             className="flex-grow p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             placeholder="Build your prompt here..."
             rows={1}
@@ -117,7 +148,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
           </motion.textarea>
           <motion.button
             type="submit"
-            disabled={hasSubmitted || inputText.trim() === ""}
+            disabled={timeLeft <= 0 || inputText.trim() === ""}
             className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

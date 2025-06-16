@@ -9,20 +9,22 @@ const router = express.Router();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 router.post('/text', authenticateToken, async(req, res) => {
-    const { prompt } = req.body;
+    const { prompt, oldResponse } = req.body;
     let response = "";
     console.log("Recieved Prompt: ", prompt);
 
     try {
         response = "Text Call is good!";
+        let content = "New prompt: " + prompt + (oldResponse ? `\n\nPrevious Response: ${oldResponse}` : "");
+        console.log("Content to send: ", content);
         // Creation call to OpenAI
         const completion = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
-                { role: 'system', content: 'You are a helpful assistant.' },
+                { role: 'system', content: 'You are a helpful assistant. Update the previous response (if available) based on the new prompt given.' },
                 {
                     role: 'user',
-                    content: prompt,
+                    content: content
                 },
             ]
         });
