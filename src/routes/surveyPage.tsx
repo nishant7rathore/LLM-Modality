@@ -9,21 +9,27 @@ const SurveyPage = () => {
     const navigate = useNavigate();
     const { sendStudyData } = useSendStudyData();
     usePreventNavigation("Please don't use the browser back button to navigate!");
-
+    const studyData = localStorage.getItem("studyData");
+    let questionType = "";
+    if (studyData) {
+        const parsed = JSON.parse(studyData);
+        questionType = parsed.questionType;
+    }
+    const textOrImage = questionType === "text" ? "text generated" : "image generated";
     const likertQuestions = [
-        "I felt involved in the creation of [text generated OR image generated].",
-        "I was the author/creator of [text generated OR image generated].",
-        "I provided significant effort to create [text generated OR image generated].",
-        "I felt the creation of [text generated OR image generated] was original work.",
-        "I felt I copied someone else’s work to create [text generated OR image generated].",
-        "I provided a significant contribution to create [text generated OR image generated].",
-        "The AI system provided a significant contribution to create [text generated OR image generated].",
-        "I controlled the creation of [text generated OR image generated].",
-        "The AI controlled the creation of [text generated OR image generated].",
-        "I feel I personally own [text generated OR image generated].",
-        "I feel I was responsible for [text generated OR image generated].",
-        "I feel emotionally connected to the [text generated OR image generated].",
-        "I feel personally connected to the [text generated OR image generated]."
+        `I felt involved in the creation of ${textOrImage}.`,
+        `I was the author/creator of ${textOrImage}.`,
+        `I provided significant effort to create ${textOrImage}.`,
+        `I felt the creation of ${textOrImage} was original work.`,
+        `I felt I copied someone else’s work to create ${textOrImage}.`,
+        `I provided a significant contribution to create ${textOrImage}.`,
+        `The AI system provided a significant contribution to create ${textOrImage}.`,
+        `I controlled the creation of ${textOrImage}.`,
+        `The AI controlled the creation of ${textOrImage}.`,
+        `I feel I personally own ${textOrImage}.`,
+        `I feel I was responsible for ${textOrImage}.`,
+        `I feel emotionally connected to the ${textOrImage}.`,
+        `I feel personally connected to the ${textOrImage}.`
     ];
 
     const textQuestions = [
