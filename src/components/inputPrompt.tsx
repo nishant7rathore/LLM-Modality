@@ -34,6 +34,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
   const {
     transcript,
     listening,
+    resetTranscript,
     finalTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
@@ -57,6 +58,19 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
+
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  };
+
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -85,6 +99,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
 
     setIsSent(true);
     setHasSubmitted(true);
+    setInputText("");
     let res = sendPrompt(inputText, oldResponse);
     res.then((response) => {
       if (response) {
@@ -96,7 +111,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
     });
     setIsSent(false);
     setIsRunning(true);
-    setTimeLeft(300); // Reset time left to 5 minutes (300 seconds)
+    setTimeLeft(timeLeft);
   };
 
   const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -105,6 +120,8 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
 
   const HandleMicButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!hasListened) {
+      setInputText("");
+      resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
     } else {
       SpeechRecognition.stopListening();
@@ -122,6 +139,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
       });
       setIsSent(false);
       setIsRunning(true);
+      setInputText("");
     }
     setHasListened(!hasListened);
   };
@@ -138,7 +156,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
             value={inputText}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            disabled={timeLeft <= 0}
+            disabled={timeLeft <= 0 || modality !== "type"}
             className="flex-grow p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             placeholder="Build your prompt here..."
             rows={1}
@@ -171,7 +189,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
 
           <motion.button
             type="button"
-            disabled={hasSubmitted}
+            disabled={timeLeft <= 0 || modality !== "voice"}
             className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -199,7 +217,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
                                  text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
             >
               {isRunning || timeLeft > 0
-                ? `Time Left: ${timeLeft}s`
+                ? `Time Left: ${formatTime(timeLeft)}`
                 : "Continue to Survey"}
             </motion.button>
           )}

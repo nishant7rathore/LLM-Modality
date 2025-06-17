@@ -123,7 +123,7 @@ const QuestionPage = () => {
     }
     // console.log("LocalStorage Data Object:", JSON.parse(localStorage.getItem("studyData") || "{}"));
 
-    //navigate("/survey");
+    navigate("/survey");
   };
 
   // Loading spinner
