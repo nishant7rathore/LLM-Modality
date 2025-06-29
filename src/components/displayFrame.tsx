@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 type ResponseType = {
     type: 'text' | 'image';
     content: string;
+    prompt: string;
 };
 
 type Props = {
@@ -42,16 +43,28 @@ const Display = ({ response, isLoading = false }: Props) => {
                                 />
                             </div>
                         ) : (
-                            <motion.div
-                                className="text-lg text-gray-700 leading-relaxed prose prose-sm lg:prose-base dark:prose-invert"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.2 }}
-                            >
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                    {response.content}
-                                </ReactMarkdown>
-                            </motion.div>
+                            <>
+                                <motion.div
+                                   className="text-lg leading-relaxed prose prose-sm lg:prose-base dark:prose-invert bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl shadow-xl p-6 mb-4 text-left border-l-8 border-pink-400"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {response.prompt}
+                                    </ReactMarkdown>
+                                </motion.div>
+                                <motion.div
+                                    className="text-lg leading-relaxed prose prose-sm lg:prose-base dark:prose-invert bg-gradient-to-l from-blue-600 to-cyan-400 text-white-900 rounded-xl shadow-xl p-6 mb-4 text-right border-r-8 border-cyan-300"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {response.content}
+                                    </ReactMarkdown>
+                                </motion.div>
+                            </>
                         )}
                     </motion.div>
                 ) : isLoading ? (

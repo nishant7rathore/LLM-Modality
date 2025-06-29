@@ -10,7 +10,7 @@ import { usePreventNavigation } from "../hooks/preventNavigation";
 type Response = {
   type: "text" | "image";
   content: string;
-  prompt?: string;
+  prompt: string;
 };
 
 // Define the type of the question object
