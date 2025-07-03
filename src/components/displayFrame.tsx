@@ -17,8 +17,8 @@ type Props = {
   
 // Display component to show the response
 const Display = ({ response, isLoading = false }: Props) => {
-    // Use an array to track which content divs are clicked
-    const [clickedIndexes, setClickedIndexes] = useState<number[]>([]);
+    // Track only one selected index at a time
+    const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
     return (
         <motion.div 
@@ -29,7 +29,7 @@ const Display = ({ response, isLoading = false }: Props) => {
         >
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Response</h1>
             <AnimatePresence mode="wait">
-                {!isLoading && response? (
+                {!isLoading && response ? (
                     <motion.div
                         key={Array.isArray(response.content) ? response.content.join('-') : response.content}
                         initial={{ opacity: 0, y: 20 }}
@@ -70,22 +70,22 @@ const Display = ({ response, isLoading = false }: Props) => {
                                         key={`content-${idx}`}
                                         id={`response-content-${idx}`}
                                         className={`text-lg leading-relaxed prose prose-sm lg:prose-base dark:prose-invert rounded-xl shadow-xl p-6 mb-4 text-left cursor-pointer ${
-                                            clickedIndexes.includes(idx)
+                                            selectedIdx === idx
                                                 ? "border-l-8 border-[#fcb69f]"
                                                 : "border-l-8 border-blue-500"
                                         }`}
                                         style={{
-                                            background: clickedIndexes.includes(idx)
+                                            background: selectedIdx === idx
                                                 ? "linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%)"
                                                 : "linear-gradient(90deg, #2563eb 0%, #a21caf 125%)",
-                                            color: clickedIndexes.includes(idx) ? "#1e293b" : "#fff",
+                                            color: selectedIdx === idx ? "#1e293b" : "#fff",
                                             transition: "color 0.3s"
                                         }}
                                         initial={{ opacity: 0 }}
                                         animate={{
                                             opacity: 1,
-                                            scale: clickedIndexes.includes(idx) ? 1.03 : 1,
-                                            boxShadow: clickedIndexes.includes(idx)
+                                            scale: selectedIdx === idx ? 1.03 : 1,
+                                            boxShadow: selectedIdx === idx
                                                 ? "0 8px 32px 0 rgba(255, 188, 143, 0.37)"
                                                 : "0 8px 32px 0 rgba(37, 99, 235, 0.37)"
                                         }}
@@ -95,13 +95,7 @@ const Display = ({ response, isLoading = false }: Props) => {
                                             type: "spring",
                                             stiffness: 300
                                         }}
-                                        onClick={() => {
-                                            setClickedIndexes(prev =>
-                                                prev.includes(idx)
-                                                    ? prev.filter(i => i !== idx)
-                                                    : [...prev, idx]
-                                            );
-                                        }}
+                                        onClick={() => setSelectedIdx(idx)}
                                     >
                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                             {Array.isArray(response.content) ? response.content[idx] : response.content}
