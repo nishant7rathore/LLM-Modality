@@ -29,7 +29,7 @@ const Display = ({ response, isLoading = false }: Props) => {
         >
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Response</h1>
             <AnimatePresence mode="wait">
-                {response ? (
+                {!isLoading && response? (
                     <motion.div
                         key={Array.isArray(response.content) ? response.content.join('-') : response.content}
                         initial={{ opacity: 0, y: 20 }}
