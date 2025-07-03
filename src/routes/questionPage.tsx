@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputPrompt from "../components/inputPrompt";
 import Display from "../components/displayFrame";
@@ -7,10 +7,10 @@ import Question from "../components/questionFrame";
 import { usePreventNavigation } from "../hooks/preventNavigation";
 
 // Define the type of the response object
-type Response = {
+type ResponseType = {
   type: "text" | "image";
-  content: string;
-  prompt: string;
+  content: string[];
+  prompt: string[];
 };
 
 // Define the type of the question object
@@ -24,7 +24,8 @@ type QuestionType = {
 // Main Question Page component
 const QuestionPage = () => {
   // useState hooks to store the response, questions, loading and responseLoading state
-  const [response, setResponse] = useState<Response | null>(null);
+  const [response, setResponse] = useState<ResponseType | null>(null);
+  const responseRef = useRef(response);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [loading, setLoading] = useState(true);
   const [responseLoading, setResponseLoading] = useState(false);
@@ -62,18 +63,25 @@ const QuestionPage = () => {
     fetchQuestions();
   }, []);
 
-  // Function to send the prompt to the backend
-  const sendPrompt = async (inputText: string, oldResponse: string): Promise<Response | null> => {
+  const addResponse = (newPrompt: string, newContent: string, type: "text" | "image") => {
+      const prevPrompt = responseRef.current?.prompt ?? [];
+      const prevContent = responseRef.current?.content ?? [];
+      const response: ResponseType = { type, prompt: [...prevPrompt, newPrompt], content: [...prevContent, newContent] };
+      setResponse(response);
+      responseRef.current = response;
+    };
+
+
+  const sendPrompt = async (inputText: string, oldResponse: string): Promise<ResponseType | null> => {
     const token = localStorage.getItem("token");
     const order = localStorage.getItem("order");
-    let result: Response | null = null;
     if (!token) {
       console.error("No token found!");
       return null;
     }
     try {
       setResponseLoading(true);
-      setResponse(null);
+
       const currentQuestion = questions[currentQuestionIndex];
       const isImage = currentQuestion.type === "image";
       const url = isImage
@@ -89,14 +97,13 @@ const QuestionPage = () => {
       if (res.status === 200) {
         const content = res.data;
         const type = isImage ? "image" : "text";
-        setResponse({ type, content, prompt: inputText });
-        result = { type, content, prompt: inputText };
+        addResponse(inputText, content, type );
       }
     } catch (error) {
       console.error("Error sending prompt: ", error);
     } finally {
       setResponseLoading(false);
-      return result; // Return the response for further processing if needed
+      return responseRef.current; // Return the response for further processing if needed
     }
   };
 

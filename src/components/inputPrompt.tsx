@@ -7,7 +7,8 @@ import SpeechRecognition, {
 
 type ResponseType = {
     type: 'text' | 'image';
-    content: string;
+    content: string[];
+    prompt: string[];
 };
 
 
@@ -103,7 +104,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
     let res = sendPrompt(inputText, oldResponse);
     res.then((response) => {
       if (response) {
-        setOldResponse(response.content);
+        setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]);
         console.log("Response received: ", response);
       } else {
         console.error("No response received from sendPrompt");
@@ -131,7 +132,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
       let res = sendPrompt(transcript, oldResponse);
       res.then((response) => {
         if (response) {
-           setOldResponse(response.content);
+          setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]);
           console.log("Response received: ", response);
         } else {
           console.error("No response received from sendPrompt");
