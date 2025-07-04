@@ -19,18 +19,22 @@ type Props = {
   modality: string;
   response: ResponseType | null;
   isLoading?: boolean;
+  selectedIdx: number | null;
+  setSelectedIdx: (idx: number) => void;
 };
 
 
 // InputPrompt component - Input bar
-const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Props) => {
+const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, response, selectedIdx }: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [oldResponse, setOldResponse] = useState<string>("");
-  const [isSent, setIsSent] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300);
+
+  // New state for popup
+  const [showPopup, setShowPopup] = useState(false);
 
   const {
     transcript,
@@ -87,7 +91,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
     setInputText(event.target.value);
     if (hasSubmitted) {
       setHasSubmitted(false);
-      setIsSent(false);
     }
   };
 
@@ -98,7 +101,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
       return;
     }
 
-    setIsSent(true);
     setHasSubmitted(true);
     setInputText("");
     let res = sendPrompt(inputText, oldResponse);
@@ -110,7 +112,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
         console.error("No response received from sendPrompt");
       }
     });
-    setIsSent(false);
     setIsRunning(true);
     setTimeLeft(timeLeft);
   };
@@ -126,7 +127,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
       SpeechRecognition.startListening({ continuous: true });
     } else {
       SpeechRecognition.stopListening();
-      setIsSent(true);
       setHasSubmitted(true);
       setInputText(finalTranscript);
       let res = sendPrompt(transcript, oldResponse);
@@ -138,12 +138,25 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
           console.error("No response received from sendPrompt");
         }
       });
-      setIsSent(false);
       setIsRunning(true);
       setInputText("");
     }
     setHasListened(!hasListened);
   };
+
+  const isContentSelected = response && typeof selectedIdx === "number" && selectedIdx >= 0;
+
+  // Handler for "Continue to Survey" button
+  const handleContinueToSurvey = () => {
+    if (!isContentSelected) {
+      setShowPopup(true);
+    } else {
+      onContinue();
+    }
+  };
+
+  // Handler to close popup
+  const handleClosePopup = () => setShowPopup(false);
 
   return (
     <motion.div
@@ -151,6 +164,8 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
       animate={{ y: 0 }}
       className="fixed bottom-0 left-0 w-full px-6 py-4 bg-white border-t border-gray-300 backdrop-blur-md bg-opacity-90"
     >
+      {/* Pass setSelectedIdx and selectedIdx to Display if needed */}
+      {/* <Display response={response} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx} ... /> */}
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
         <div className="flex items-center space-x-6">
           <motion.textarea
@@ -174,7 +189,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
             hidden={modality === "voice"}
           >
             <AnimatePresence mode="wait">
-              {isSent ? (
+              {hasSubmitted ? (
                 <motion.div
                   key="loading"
                   initial={{ opacity: 0 }}
@@ -208,7 +223,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
 
           {responseGenerated && hasSubmitted && (
             <motion.button
-              onClick={isRunning || timeLeft > 0 ? onPause : onContinue}
+              onClick={isRunning || timeLeft > 0 ? onPause : handleContinueToSurvey}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -216,6 +231,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
               whileTap={{ scale: 0.98 }}
               className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 
                                  text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+              type="button"
             >
               {isRunning || timeLeft > 0
                 ? `Time Left: ${formatTime(timeLeft)}`
@@ -224,6 +240,45 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality }: Pr
           )}
         </div>
       </form>
+      {/* Pop-up Modal */}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+            style={{ pointerEvents: "auto" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full flex flex-col items-center border-4 border-pink-300"
+              style={{ marginBottom: "18rem" }} // Move popup further up
+              initial={{ scale: 0.8, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 40 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <div className="mb-4">
+                <svg className="w-16 h-16 text-pink-400 mx-auto animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-pink-500 mb-2 text-center">Please select a response!</h2>
+              <p className="text-gray-700 dark:text-gray-200 text-center mb-6">
+                You must select one of the responses above before continuing to the survey.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-5 py-2 rounded bg-gradient-to-r from-pink-400 to-blue-500 text-white font-semibold shadow"
+                onClick={handleClosePopup}
+              >
+                Got it!
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

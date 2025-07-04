@@ -25,6 +25,7 @@ type QuestionType = {
 const QuestionPage = () => {
   // useState hooks to store the response, questions, loading and responseLoading state
   const [response, setResponse] = useState<ResponseType | null>(null);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const responseRef = useRef(response);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +67,11 @@ const QuestionPage = () => {
   const addResponse = (newPrompt: string, newContent: string, type: "text" | "image") => {
       const prevPrompt = responseRef.current?.prompt ?? [];
       const prevContent = responseRef.current?.content ?? [];
-      const response: ResponseType = { type, prompt: [...prevPrompt, newPrompt], content: [...prevContent, newContent] };
+      const response: ResponseType = { 
+        type, 
+        prompt: [...prevPrompt, newPrompt], 
+        content: [...prevContent, newContent]
+      };
       setResponse(response);
       responseRef.current = response;
     };
@@ -118,6 +123,7 @@ const QuestionPage = () => {
         modality: questions[currentQuestionIndex].modality,
         prompt: response?.prompt,
         response: response?.content,
+        selectedIdx: selectedIdx,
       })
     );
 
@@ -145,13 +151,13 @@ const QuestionPage = () => {
   return (
     <div className="App min-h-screen pb-32">
       <Question question={questions[currentQuestionIndex]} />
-      <Display response={response} isLoading={responseLoading} />
+      <Display response={response} isLoading={responseLoading} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx}/>
       <InputPrompt
         sendPrompt={(inputText: string, oldPrompt: string) => sendPrompt(inputText, oldPrompt)}
         onContinue={() => handleContinue()}
         responseGenerated={response !== null}
         modality={questions[currentQuestionIndex].modality}
-        response={response}
+        response={response} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx}
       />
     </div>
   );

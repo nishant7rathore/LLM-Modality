@@ -34,6 +34,7 @@ router.post("/db", authenticateToken, async (req, res) => {
       modality: studyData.modality.toString(),
       prompt: studyData.prompt,
       response: studyData.response,
+      selectedIdx: studyData.selectedIdx,
       surveyAnswers: studyData.surveyAnswers,
       createdAt: new Date().toISOString(),
     },
