@@ -31,7 +31,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   // New state for popup
   const [showPopup, setShowPopup] = useState(false);
@@ -88,10 +88,11 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputText(event.target.value);
     if (hasSubmitted) {
-      setHasSubmitted(false);
+      return;
     }
+    setHasSubmitted(false);
+    setInputText(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -100,10 +101,10 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
     if (hasSubmitted) {
       return;
     }
-
     setHasSubmitted(true);
-    setInputText("");
+    setIsRunning(false);
     let res = sendPrompt(inputText, oldResponse);
+    setInputText("");
     res.then((response) => {
       if (response) {
         setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]);
@@ -111,9 +112,11 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
       } else {
         console.error("No response received from sendPrompt");
       }
+      setHasSubmitted(false);
+      setIsRunning(true);
+      setTimeLeft(timeLeft);
     });
-    setIsRunning(true);
-    setTimeLeft(timeLeft);
+  
   };
 
   const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -127,8 +130,9 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
       SpeechRecognition.startListening({ continuous: true });
     } else {
       SpeechRecognition.stopListening();
-      setHasSubmitted(true);
       setInputText(finalTranscript);
+      setHasSubmitted(true);
+      setIsRunning(false);
       let res = sendPrompt(transcript, oldResponse);
       res.then((response) => {
         if (response) {
@@ -137,10 +141,11 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
         } else {
           console.error("No response received from sendPrompt");
         }
-      });
       setIsRunning(true);
-      setInputText("");
+      setHasSubmitted(false);
+      });
     }
+    setInputText("");
     setHasListened(!hasListened);
   };
 
@@ -172,7 +177,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
             value={inputText}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            disabled={timeLeft <= 0 || modality !== "type"}
+            disabled={hasSubmitted || timeLeft <= 0 || modality !== "type"}
             className="flex-grow p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             placeholder="Build your prompt here..."
             rows={1}
@@ -221,7 +226,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
             </AnimatePresence>
           </motion.button>
 
-          {responseGenerated && hasSubmitted && (
+          {responseGenerated && !hasSubmitted && (
             <motion.button
               onClick={isRunning || timeLeft > 0 ? onPause : handleContinueToSurvey}
               initial={{ opacity: 0, scale: 0.9 }}
