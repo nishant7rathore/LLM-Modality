@@ -11,7 +11,6 @@ type ResponseType = {
     prompt: string[];
 };
 
-
 type Props = {
   sendPrompt: (inputText: string, oldPrompt: string) => Promise<ResponseType | null | undefined>;
   onContinue: () => void;
@@ -23,9 +22,14 @@ type Props = {
   setSelectedIdx: (idx: number) => void;
 };
 
-
-// InputPrompt component - Input bar
-const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, response, selectedIdx }: Props) => {
+const InputPrompt = ({
+  sendPrompt,
+  onContinue,
+  responseGenerated,
+  modality,
+  response,
+  selectedIdx,
+}: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [oldResponse, setOldResponse] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
@@ -44,11 +48,11 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
 
-  // Get the error when it occurs
+  // Check if a response is selected
+  const isContentSelected = response && typeof selectedIdx === "number" && selectedIdx >= 0;
+
+  // Show popup automatically when timer ends and no response is selected
   useEffect(() => {
-    if (listening) {
-      setInputText(finalTranscript);
-    }
     let timer: string | number | NodeJS.Timeout | undefined;
     if (isRunning && timeLeft > 0) {
       timer = setInterval(() => {
@@ -56,9 +60,19 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
       }, 1000);
     } else if (timeLeft === 0) {
       setIsRunning(false);
+      if (!isContentSelected) {
+        setShowPopup(true);
+      }
     }
     return () => clearInterval(timer);
-  }, [listening, finalTranscript, isRunning, timeLeft]);
+  }, [listening, finalTranscript, isRunning, timeLeft, isContentSelected]);
+
+  useEffect(() => {
+    // Only update inputText live for voice modality and while listening
+    if (modality === "voice" && listening) {
+      setInputText(transcript);
+    }
+  }, [transcript, listening, modality]);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -76,7 +90,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
 
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       handleSubmit(event);
@@ -91,7 +104,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
     if (hasSubmitted) {
       return;
     }
-    setHasSubmitted(false);
     setInputText(event.target.value);
   };
 
@@ -116,7 +128,6 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
       setIsRunning(true);
       setTimeLeft(timeLeft);
     });
-  
   };
 
   const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -141,15 +152,13 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
         } else {
           console.error("No response received from sendPrompt");
         }
-      setIsRunning(true);
-      setHasSubmitted(false);
+        setIsRunning(true);
+        setHasSubmitted(false);
       });
     }
     setInputText("");
     setHasListened(!hasListened);
   };
-
-  const isContentSelected = response && typeof selectedIdx === "number" && selectedIdx >= 0;
 
   // Handler for "Continue to Survey" button
   const handleContinueToSurvey = () => {
@@ -163,14 +172,17 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
   // Handler to close popup
   const handleClosePopup = () => setShowPopup(false);
 
+  // Only show "Continue to Survey" button if timer is over and a response is selected
+  const showContinueButton = responseGenerated && timeLeft === 0 && isContentSelected && !hasSubmitted;
+  // Show timer button only if timer is running or time left
+  const showTimerButton = responseGenerated && timeLeft > 0 && !hasSubmitted;
+
   return (
     <motion.div
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       className="fixed bottom-0 left-0 w-full px-6 py-4 bg-white border-t border-gray-300 backdrop-blur-md bg-opacity-90"
     >
-      {/* Pass setSelectedIdx and selectedIdx to Display if needed */}
-      {/* <Display response={response} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx} ... /> */}
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
         <div className="flex items-center space-x-6">
           <motion.textarea
@@ -187,7 +199,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
           </motion.textarea>
           <motion.button
             type="submit"
-            disabled={timeLeft <= 0 || inputText.trim() === ""}
+            disabled={hasSubmitted || timeLeft <= 0 || inputText.trim() === ""}
             className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -210,7 +222,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
 
           <motion.button
             type="button"
-            disabled={timeLeft <= 0 || modality !== "voice"}
+            disabled={hasSubmitted || timeLeft <= 0 || modality !== "voice"}
             className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -226,9 +238,10 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
             </AnimatePresence>
           </motion.button>
 
-          {responseGenerated && !hasSubmitted && (
+          {/* Timer button: only show while timer is running and no response is selected */}
+          {showTimerButton && (
             <motion.button
-              onClick={isRunning || timeLeft > 0 ? onPause : handleContinueToSurvey}
+              onClick={onPause}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -238,9 +251,24 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
                                  text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               type="button"
             >
-              {isRunning || timeLeft > 0
-                ? `Time Left: ${formatTime(timeLeft)}`
-                : "Continue to Survey"}
+              Time Left: {formatTime(timeLeft)}
+            </motion.button>
+          )}
+
+          {/* Continue to Survey button: only show after timer ends and a response is selected */}
+          {showContinueButton && (
+            <motion.button
+              onClick={handleContinueToSurvey}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 
+                                 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+              type="button"
+            >
+              Continue to Survey
             </motion.button>
           )}
         </div>
@@ -257,7 +285,7 @@ const InputPrompt = ({ sendPrompt, onContinue, responseGenerated, modality, resp
           >
             <motion.div
               className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full flex flex-col items-center border-4 border-pink-300"
-              style={{ marginBottom: "18rem" }} // Move popup further up
+              style={{ marginBottom: "18rem" }}
               initial={{ scale: 0.8, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 40 }}
