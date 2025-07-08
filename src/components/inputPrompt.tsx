@@ -29,6 +29,7 @@ const InputPrompt = ({
   modality,
   response,
   selectedIdx,
+  setSelectedIdx,
 }: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [oldResponse, setOldResponse] = useState<string>("");
@@ -49,7 +50,9 @@ const InputPrompt = ({
   } = useSpeechRecognition();
 
   // Check if a response is selected
-  const isContentSelected = response && typeof selectedIdx === "number" && selectedIdx >= 0;
+  const isContentSelected =
+    (response && typeof selectedIdx === "number" && selectedIdx >= 0) ||
+    (response?.content?.length === 1 && (selectedIdx === null || selectedIdx === undefined));
 
   // Show popup automatically when timer ends and no response is selected
   useEffect(() => {
@@ -162,7 +165,10 @@ const InputPrompt = ({
 
   // Handler for "Continue to Survey" button
   const handleContinueToSurvey = () => {
-    if (!isContentSelected) {
+    // If only one content and nothing is selected, treat as selected and continue
+    if (response?.content?.length === 1 && (selectedIdx === null || selectedIdx === undefined)) {
+      onContinue();
+    } else if (!isContentSelected) {
       setShowPopup(true);
     } else {
       onContinue();
