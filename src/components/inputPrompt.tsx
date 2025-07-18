@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { usePreventContextMenu } from "../hooks/preventContextMenu";
 
 type ResponseType = {
     type: 'text' | 'image';
@@ -53,6 +54,8 @@ const InputPrompt = ({
   const isContentSelected =
     (response && typeof selectedIdx === "number" && selectedIdx >= 0) ||
     (response?.content?.length === 1 && (selectedIdx === null || selectedIdx === undefined));
+
+  usePreventContextMenu();
 
   // Show popup automatically when timer ends and no response is selected
   useEffect(() => {
