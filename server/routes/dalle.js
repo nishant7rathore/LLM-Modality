@@ -25,20 +25,41 @@ router.post('/dalle', authenticateToken, async(req, res) => {
     const order = req.body.order;
     const questionID = req.body.questionID;
     const userID = req.user.PROLIFIC_PID;
+    const imageUrl = req.body.oldResponse;
+    // Download the image from DALL-E
+    const oldImageResponse = imageUrl === '' ? null : await fetch(imageUrl);
+    const oldImageBuffer = oldImageResponse ? await oldImageResponse.arrayBuffer() : null;
 
     console.log("Recieved Prompt dalle.js: ", prompt);
     console.log("User ID dalle.js: ", userID);
 
     try {
-        // Generate image with DALL-E
-        const response = await openai.images.generate({
-            model: "dall-e-3",
-            prompt: prompt,
-            n: 1,
-            size: "1024x1024",
-        });
+        let response;
+        if (oldImageBuffer) {
+            response = await openai.images.edit({
+                model: "dall-e-2",
+                prompt: "Can you look at the image (if attached) and update it according to this instruction? :" + prompt,
+                n: 1,
+                size: "1024x1024",
+                image: [
+                    {
+                        name: "base.png", // filename is important
+                        buffer: Buffer.from(oldImageBuffer) // the binary data
+                    }
+                ]
+            });
+        } else {
+            response = await openai.images.generate({
+                model: "dall-e-3",
+                prompt: prompt,
+                n: 1,
+                size: "1024x1024"
+            });
+        }
 
         const imageViewUrl = response.data[0].url;
+        const revised_prompt = response.data[0].revised_prompt;
+        console.log("Revised Prompt: ", revised_prompt);
         console.log("Image URL: ", imageViewUrl);
 
         // Download the image from DALL-E

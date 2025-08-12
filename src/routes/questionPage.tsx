@@ -64,17 +64,19 @@ const QuestionPage = () => {
     fetchQuestions();
   }, []);
 
-  const addResponse = (newPrompt: string, newContent: string, type: "text" | "image") => {
-      const prevPrompt = responseRef.current?.prompt ?? [];
-      const prevContent = responseRef.current?.content ?? [];
-      const response: ResponseType = { 
-        type, 
-        prompt: [...prevPrompt, newPrompt], 
-        content: [...prevContent, newContent]
-      };
-      setResponse(response);
-      responseRef.current = response;
+  const addResponse = (newPrompt: string, newContent: string | string[], type: "text" | "image") => {
+    const prevPrompt = responseRef.current?.prompt ?? [];
+    const prevContent = responseRef.current?.content ?? [];
+    // Ensure newContent is always an array
+    const newContentArr = Array.isArray(newContent) ? newContent : [newContent];
+    const response: ResponseType = { 
+      type, 
+      prompt: [...prevPrompt, newPrompt], 
+      content: [...prevContent, ...newContentArr] // <-- append all new images
     };
+    setResponse(response);
+    responseRef.current = response;
+  };
 
 
   const sendPrompt = async (inputText: string, oldResponse: string): Promise<ResponseType | null> => {
@@ -102,7 +104,7 @@ const QuestionPage = () => {
       if (res.status === 200) {
         const content = res.data;
         const type = isImage ? "image" : "text";
-        addResponse(inputText, content, type );
+        addResponse(inputText, content, type);
       }
     } catch (error) {
       console.error("Error sending prompt: ", error);

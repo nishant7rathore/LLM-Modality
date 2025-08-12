@@ -10,6 +10,13 @@ type QuestionType = {
 
 // Question component to show the question
 const Question = ({ question }: { question: QuestionType }) => {
+    // Fix image path if needed
+    let imageSrc = "";
+    if (question.type === "image") {
+        imageSrc = question.content.includes("%PUBLIC_URL%")
+            ? question.content.replace("%PUBLIC_URL%", process.env.PUBLIC_URL || "")
+            : question.content;
+    }
     return (
         <motion.div 
             initial="hidden"
@@ -31,8 +38,21 @@ const Question = ({ question }: { question: QuestionType }) => {
                 <span className="inline-block px-3 py-1 mt-2 bg-blue-100 text-blue-800 rounded-full text-sm">
                     {question.type === 'text' ? '🖊 Text Generation' : '🎨 Image Generation'}
                 </span>
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-gray-800 whitespace-pre-wrap">{question.content}</p>
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col items-center">
+                    {question.type === 'image' ? (
+                        <motion.img
+                            src={imageSrc}
+                            alt="Prompt visual"
+                            className="w-[90%] h-auto mx-auto rounded-lg shadow-md transform transition-transform duration-300 group-hover:scale-102"
+                            layoutId="question-image"
+                            style={{
+                                boxShadow: "0 8px 32px 0 rgba(37, 99, 235, 0.37)",
+                                transition: "box-shadow 0.3s, border-color 0.3s"
+                            }}
+                        />
+                    ) : (
+                        <p className="text-gray-800 whitespace-pre-wrap">{question.content}</p>
+                    )}
                 </div>
             </motion.div>
         </motion.div>
