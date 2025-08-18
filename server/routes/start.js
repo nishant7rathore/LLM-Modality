@@ -21,7 +21,7 @@ const client = new DynamoDBClient({
 const documentClient = DynamoDBDocumentClient.from(client);
 
 // Order
-const ORDERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const ORDERS = [0, 1, 2, 3, 4, 5, 6, 7];
 
 // Function to get the next order
 const getNextOrder = async () => {

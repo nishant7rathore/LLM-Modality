@@ -97,7 +97,7 @@ const SurveyPage = () => {
 
         // Navigate to next question or end of survey (HARDCODED TO 5 QUESTIONS)
         const currentQuestionIndex = parseInt(localStorage.getItem("currentQuestionIndex") || "0");
-        if (currentQuestionIndex < 5) {
+        if (currentQuestionIndex < 4) {
             navigate("/prompt");
         }
         else {
