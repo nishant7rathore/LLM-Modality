@@ -25,37 +25,27 @@ router.post('/dalle', authenticateToken, async(req, res) => {
     const order = req.body.order;
     const questionID = req.body.questionID;
     const userID = req.user.PROLIFIC_PID;
-    const imageUrl = req.body.oldResponse;
-    // Download the image from DALL-E
-    const oldImageResponse = imageUrl === '' ? null : await fetch(imageUrl);
-    const oldImageBuffer = oldImageResponse ? await oldImageResponse.arrayBuffer() : null;
+    const oldInputText = req.body.oldResponse || ""; // Now oldResponse is previous input text
 
-    console.log("Recieved Prompt dalle.js: ", prompt);
+    // Combine previous input text and current prompt
+    let combinedPrompt = "";
+    if (oldInputText && oldInputText.trim() !== "") {
+        combinedPrompt = `Here is the previous instruction: "${oldInputText}".\nHere is the new instruction: "${prompt}".\nPlease generate an image that reflects both instructions together.`;
+    } else {
+        combinedPrompt = `Instruction: "${prompt}". Please generate an image based on this instruction.`;
+    }
+
+    console.log("Combined Prompt for DALL-E: ", combinedPrompt);
     console.log("User ID dalle.js: ", userID);
 
     try {
-        let response;
-        if (oldImageBuffer) {
-            response = await openai.images.edit({
-                model: "dall-e-2",
-                prompt: "Can you look at the image (if attached) and update it according to this instruction? :" + prompt,
-                n: 1,
-                size: "1024x1024",
-                image: [
-                    {
-                        name: "base.png", // filename is important
-                        buffer: Buffer.from(oldImageBuffer) // the binary data
-                    }
-                ]
-            });
-        } else {
-            response = await openai.images.generate({
-                model: "dall-e-3",
-                prompt: prompt,
-                n: 1,
-                size: "1024x1024"
-            });
-        }
+        // Always use images.generate, since we are not sending an image buffer anymore
+        const response = await openai.images.generate({
+            model: "dall-e-3",
+            prompt: combinedPrompt,
+            n: 1,
+            size: "1024x1024"
+        });
 
         const imageViewUrl = response.data[0].url;
         const revised_prompt = response.data[0].revised_prompt;
@@ -88,6 +78,7 @@ router.post('/dalle', authenticateToken, async(req, res) => {
     catch (error) {
         const errorMessage = "I am sorry, Something went wrong!";
         console.log("Error:" + errorMessage + "- ", error);
+        res.status(500).json({ error: errorMessage });
     }
 });
 

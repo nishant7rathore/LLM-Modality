@@ -33,6 +33,7 @@ router.post("/db", authenticateToken, async (req, res) => {
       questionType: studyData.questionType.toString(),
       modality: studyData.modality.toString(),
       prompt: studyData.prompt,
+      content: studyData.content,
       response: studyData.response,
       selectedIdx: studyData.selectedIdx,
       surveyAnswers: studyData.surveyAnswers,

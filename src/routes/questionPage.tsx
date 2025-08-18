@@ -122,6 +122,7 @@ const QuestionPage = () => {
         ...JSON.parse(localStorage.getItem("studyData") || "{}"),
         questionID: currentQuestionIndex,
         questionType: questions[currentQuestionIndex].type,
+        content: questions[currentQuestionIndex].content,
         modality: questions[currentQuestionIndex].modality,
         prompt: response?.prompt,
         response: response?.content,

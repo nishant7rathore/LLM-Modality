@@ -125,7 +125,7 @@ const InputPrompt = ({
     setInputText("");
     res.then((response) => {
       if (response) {
-        setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]);
+        response.type === 'image' ? (setOldResponse(response.prompt.length === 0 ? "" : response.prompt[response.prompt.length - 1])) : (setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]));
         console.log("Response received: ", response);
       } else {
         console.error("No response received from sendPrompt");
@@ -153,7 +153,7 @@ const InputPrompt = ({
       let res = sendPrompt(transcript, oldResponse);
       res.then((response) => {
         if (response) {
-          setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]);
+          response.type === 'image' ? (setOldResponse(response.prompt.length === 0 ? "" : response.content[response.prompt.length - 1])) : (setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]));
           console.log("Response received: ", response);
         } else {
           console.error("No response received from sendPrompt");
