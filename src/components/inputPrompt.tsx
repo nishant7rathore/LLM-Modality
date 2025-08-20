@@ -37,7 +37,7 @@ const InputPrompt = ({
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   // New state for popup
   const [showPopup, setShowPopup] = useState(false);

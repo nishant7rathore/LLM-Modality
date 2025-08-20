@@ -41,20 +41,18 @@ router.post('/dalle', authenticateToken, async(req, res) => {
     try {
         // Always use images.generate, since we are not sending an image buffer anymore
         const response = await openai.images.generate({
-            model: "dall-e-3",
+            model: "gpt-image-1",
             prompt: combinedPrompt,
             n: 1,
+            quality: "high",
             size: "1024x1024"
         });
 
-        const imageViewUrl = response.data[0].url;
-        const revised_prompt = response.data[0].revised_prompt;
-        console.log("Revised Prompt: ", revised_prompt);
-        console.log("Image URL: ", imageViewUrl);
-
-        // Download the image from DALL-E
-        const imageResponse = await fetch(imageViewUrl);
-        const imageBuffer = await imageResponse.arrayBuffer();
+        const imageBase64 = response.data[0].b64_json;
+        //const revised_prompt = response.data[0]?.revised_prompt;
+        //console.log("Revised Prompt: ", revised_prompt);
+        //console.log("Response: ", response);
+        const imageBuffer = Buffer.from(imageBase64, 'base64');
 
         // Generate unique filename
         const fileName = `${userID}-${order}-${questionID}-${Date.now()}.png`;
@@ -63,7 +61,7 @@ router.post('/dalle', authenticateToken, async(req, res) => {
         const uploadParams = {
             Bucket: process.env.S3_BUCKET_NAME,
             Key: fileName,
-            Body: Buffer.from(imageBuffer),
+            Body: imageBuffer,
             ContentType: 'image/png'
         };
         

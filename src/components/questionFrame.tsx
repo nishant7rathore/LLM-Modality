@@ -38,6 +38,10 @@ const Question = ({ question }: { question: QuestionType }) => {
                 <span className="inline-block px-3 py-1 mt-2 bg-blue-100 text-blue-800 rounded-full text-sm">
                     {question.type === 'text' ? '🖊 Text Generation' : '🎨 Image Generation'}
                 </span>
+                {/* Instruction for multiple prompts */}
+                <div className="mt-2 mb-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
+                    You can submit multiple prompts for this question. Try refining or adding to your previous prompt to see different results!
+                </div>
                 <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col items-center">
                     {question.type === 'image' ? (
                         <motion.img
