@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaArrowUp, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import { FaArrowUp, FaMicrophone, FaCommentDots, FaStop } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -37,7 +37,7 @@ const InputPrompt = ({
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   // New state for popup
   const [showPopup, setShowPopup] = useState(false);
@@ -229,23 +229,37 @@ const InputPrompt = ({
             </AnimatePresence>
           </motion.button>
 
-          <motion.button
-            type="button"
-            disabled={hasSubmitted || timeLeft <= 0 || modality !== "voice"}
-            className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={HandleMicButtonClick}
-            hidden={modality === "type"}
-          >
-            <AnimatePresence mode="sync">
-              {hasListened ? (
-                <FaMicrophone className="w-6 h-6" />
-              ) : (
-                <FaMicrophoneSlash className="w-6 h-6" />
-              )}
-            </AnimatePresence>
-          </motion.button>
+          {/* Voice input button and label */}
+          <div className="flex flex-col items-center">
+            <motion.button
+              type="button"
+              disabled={hasSubmitted || timeLeft <= 0 || modality !== "voice"}
+              className="p-4 bg-blue-600 text-white rounded-full disabled:bg-gray-400 transition-colors duration-200"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={HandleMicButtonClick}
+              hidden={modality === "type"}
+            >
+              <AnimatePresence mode="sync">
+                {!hasListened ? (
+                  <FaMicrophone className="w-6 h-6" />
+                ) : listening ? (
+                  <FaStop className="w-6 h-6" />
+                ) : (
+                  <FaCommentDots className="w-6 h-6" />
+                )}
+              </AnimatePresence>
+            </motion.button>
+            <span className="mt-2 text-xs text-gray-700 font-semibold select-none">
+              {hasSubmitted || timeLeft <= 0 || modality !== "voice"
+                ? ""
+                : !hasListened
+                ? "Start Recording"
+                : listening
+                ? "Stop Recording"
+                : "Processing"}
+            </span>
+          </div>
 
           {/* Timer button: only show while timer is running and no response is selected */}
           {showTimerButton && (

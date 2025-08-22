@@ -41,24 +41,23 @@ const Question = ({ question }: { question: QuestionType }) => {
                 variants={slideUp}
                 className="prose prose-lg"
             >
-                <p className="text-gray-700 text-xl">{question.text}</p>
+                {/* <p className="text-gray-700 text-xl">{question.text}</p> */}
                 <span className="inline-block px-3 py-1 mt-2 bg-blue-100 text-blue-800 rounded-full text-sm">
                     {question.type === 'text' ? '🖊 Text Generation' : '🎨 Image Generation'}
+                    
                 </span>
-                {/* Modality instruction */}
-                <div className="mt-2 mb-2 p-3 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded">
-                    {modalityInstruction}
-                </div>
                 {/* Instruction for multiple prompts */}
                 <div className="mb-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
-                    You can submit multiple prompts for this question. Try refining or adding to your previous prompt to see different results!
+                    {modalityInstruction} You can submit multiple prompts for this question. Try refining or adding to your previous prompt to see different results!
                 </div>
                 <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col items-center">
                     {question.type === 'image' ? (
                         <>
-                            <p className="text-gray-800 whitespace-pre-wrap mb-4">
-                                Collaborate with the AI to describe the image below as accurately and creatively as possible. Use detailed language to capture what you see.
-                            </p>
+                            <div className="mb-4 w-full">
+                                <div className="text-lg text-gray-800 mb-2">
+                                    Collaborate with the AI to recreate the image below as accurately and creatively as possible. Use detailed language to capture what you see.
+                                </div>
+                            </div>
                             <motion.img
                                 src={imageSrc}
                                 alt="Prompt visual"
@@ -71,10 +70,14 @@ const Question = ({ question }: { question: QuestionType }) => {
                             />
                         </>
                     ) : (
-                        <p className="text-gray-800 whitespace-pre-wrap">
-                            Collaborate with the AI to write a blog post about the following topic:<br />
-                            <span className="font-semibold">{question.content}</span>
-                        </p>
+                        <div className="w-full">
+                            <div className="text-lg text-gray-800 mb-2">
+                                Collaborate with the AI to write a blog post about the following topic:
+                            </div>
+                            <div className="text-md text-gray-900 italic bg-white rounded px-3 py-2 border border-purple-100 shadow-sm">
+                                {question.content}
+                            </div>
+                        </div>
                     )}
                 </div>
             </motion.div>
