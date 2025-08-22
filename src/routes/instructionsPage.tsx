@@ -5,7 +5,7 @@ import { usePreventNavigation } from "../hooks/preventNavigation";
 const InstructionsPage = () => {
     const navigate = useNavigate();
     const instructions = [
-        "You will be presented with different prompting tasks",
+        "You will be presented with four different prompting tasks",
         "Write creative prompts for text or image generation",
         "Use voice or text input to create prompts",
         "Review the generated content",
