@@ -7,7 +7,10 @@ const InstructionsPage = () => {
     const instructions = [
         "You will be presented with different prompting tasks",
         "Write creative prompts for text or image generation",
+        "Use voice or text input to create prompts",
         "Review the generated content",
+        "Refine your prompts and update them as needed",
+        "Select your preferred response",
         "Complete a short survey after each task"
     ];
     usePreventNavigation("Please don't use the browser back button to navigate!");
