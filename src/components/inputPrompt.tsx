@@ -321,7 +321,7 @@ const InputPrompt = ({
               </div>
               <h2 className="text-xl font-bold text-pink-500 mb-2 text-center">Please select a response!</h2>
               <p className="text-gray-700 dark:text-gray-200 text-center mb-6">
-                You must select one of the responses above before continuing to the survey.
+                Please select the response that best matches what you intended to create before continuing.
               </p>
               <motion.button
                 whileHover={{ scale: 1.08 }}

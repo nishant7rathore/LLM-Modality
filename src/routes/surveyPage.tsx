@@ -128,10 +128,10 @@ const SurveyPage = () => {
             animate="animate"
             exit="exit"
             transition={{ duration: 0.5 }}
-            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8 px-4"
+            className="w-full bg-gradient-to-br from-blue-50 to-purple-50 px-4"
         >
              <motion.div 
-                className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8"
+                className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-0"
             >
                 <motion.h1 
                     initial={{ opacity: 0, y: -20 }}
