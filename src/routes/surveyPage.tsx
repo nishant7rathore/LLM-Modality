@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useSendStudyData from "../hooks/sendStudyData";
 import { motion } from "framer-motion";
@@ -17,19 +17,19 @@ const SurveyPage = () => {
     }
     const textOrImage = questionType === "text" ? "text generated" : "image generated";
     const likertQuestions = [
-        `I felt involved in the creation of ${textOrImage}.`,
-        `I was the author/creator of ${textOrImage}.`,
-        `I provided significant effort to create ${textOrImage}.`,
-        `I felt the creation of ${textOrImage} was original work.`,
-        `I felt I copied someone else’s work to create ${textOrImage}.`,
-        `I provided a significant contribution to create ${textOrImage}.`,
-        `The AI system provided a significant contribution to create ${textOrImage}.`,
-        `I controlled the creation of ${textOrImage}.`,
-        `The AI controlled the creation of ${textOrImage}.`,
-        `I feel I personally own ${textOrImage}.`,
-        `I feel I was responsible for ${textOrImage}.`,
-        `I feel emotionally connected to the ${textOrImage}.`,
-        `I feel personally connected to the ${textOrImage}.`
+        `I felt involved in the ${textOrImage} creation.`,
+        `I am the author of the created ${textOrImage}.`,
+        `I provided significant effort to create the ${textOrImage}.`,
+        `The created ${textOrImage} is my original work.`,
+        `I copied someone else’s work to create the ${textOrImage}.`,
+        `I contributed significantly to the ${textOrImage} creation.`,
+        `The AI system contributed significantly to the ${textOrImage} creation.`,
+        `I controlled the ${textOrImage} creation.`,
+        `The AI controlled the ${textOrImage} creation.`,
+        `I personally own the created ${textOrImage}.`,
+        `I was responsible for the created ${textOrImage}.`,
+        `I feel emotionally connected to the created ${textOrImage}.`,
+        `I feel personally connected to the created ${textOrImage}.`
     ];
 
     const textQuestions = [
@@ -120,6 +120,10 @@ const SurveyPage = () => {
         initial: { opacity: 0, x: -20 },
         animate: { opacity: 1, x: 0 }
     };
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <motion.div 
