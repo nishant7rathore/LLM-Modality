@@ -11,6 +11,7 @@ type ResponseType = {
   type: "text" | "image";
   content: string[];
   prompt: string[];
+  timeTaken: number[];
 };
 
 // Define the type of the question object
@@ -64,22 +65,24 @@ const QuestionPage = () => {
     fetchQuestions();
   }, []);
 
-  const addResponse = (newPrompt: string, newContent: string | string[], type: "text" | "image") => {
+  const addResponse = (newPrompt: string, newContent: string | string[], type: "text" | "image", timeTaken: number) => {
     const prevPrompt = responseRef.current?.prompt ?? [];
     const prevContent = responseRef.current?.content ?? [];
+    const prevTimeTaken = responseRef.current?.timeTaken ?? [];
     // Ensure newContent is always an array
     const newContentArr = Array.isArray(newContent) ? newContent : [newContent];
     const response: ResponseType = { 
-      type, 
-      prompt: [...prevPrompt, newPrompt], 
-      content: [...prevContent, ...newContentArr] // <-- append all new images
+      type,
+      prompt: [...prevPrompt, newPrompt],
+      content: [...prevContent, ...newContentArr],
+      timeTaken: [...prevTimeTaken, timeTaken]
     };
     setResponse(response);
     responseRef.current = response;
   };
 
 
-  const sendPrompt = async (inputText: string, oldResponse: string): Promise<ResponseType | null> => {
+  const sendPrompt = async (inputText: string, oldResponse: string, timeTaken: number): Promise<ResponseType | null> => {
     const token = localStorage.getItem("token");
     const order = localStorage.getItem("order");
     if (!token) {
@@ -104,7 +107,7 @@ const QuestionPage = () => {
       if (res.status === 200) {
         const content = res.data;
         const type = isImage ? "image" : "text";
-        addResponse(inputText, content, type);
+        addResponse(inputText, content, type, timeTaken);
       }
     } catch (error) {
       console.error("Error sending prompt: ", error);
@@ -126,7 +129,8 @@ const QuestionPage = () => {
         modality: questions[currentQuestionIndex].modality,
         prompt: response?.prompt,
         response: response?.content,
-        selectedIdx: selectedIdx,
+        selectedIdx: selectedIdx || 0,
+        timeTaken: response?.timeTaken,
       })
     );
 
@@ -156,11 +160,11 @@ const QuestionPage = () => {
       <Question question={questions[currentQuestionIndex]} />
       <Display response={response} isLoading={responseLoading} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx}/>
       <InputPrompt
-        sendPrompt={(inputText: string, oldPrompt: string) => sendPrompt(inputText, oldPrompt)}
+        sendPrompt={(inputText: string, oldPrompt: string, timeTaken: number) => sendPrompt(inputText, oldPrompt, timeTaken)}
         onContinue={() => handleContinue()}
         responseGenerated={response !== null}
         modality={questions[currentQuestionIndex].modality}
-        response={response} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx}
+        response={response} selectedIdx={selectedIdx}
       />
     </div>
   );

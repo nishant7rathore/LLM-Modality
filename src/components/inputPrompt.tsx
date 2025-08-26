@@ -10,17 +10,17 @@ type ResponseType = {
     type: 'text' | 'image';
     content: string[];
     prompt: string[];
+    timeTaken: number[];
 };
 
 type Props = {
-  sendPrompt: (inputText: string, oldPrompt: string) => Promise<ResponseType | null | undefined>;
+  sendPrompt: (inputText: string, oldPrompt: string, timeTaken: number) => Promise<ResponseType | null | undefined>;
   onContinue: () => void;
   responseGenerated: boolean;
   modality: string;
   response: ResponseType | null;
   isLoading?: boolean;
   selectedIdx: number | null;
-  setSelectedIdx: (idx: number) => void;
 };
 
 const InputPrompt = ({
@@ -30,14 +30,16 @@ const InputPrompt = ({
   modality,
   response,
   selectedIdx,
-  setSelectedIdx,
 }: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [oldResponse, setOldResponse] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
+  let timeTaken = 0.0;
+  const TIME = 30;
+  const [startTime, setStartTime] = useState(Date.now()); // Represents the current local time
+  const [timeLeft, setTimeLeft] = useState(TIME);
 
   // New state for popup
   const [showPopup, setShowPopup] = useState(false);
@@ -121,19 +123,29 @@ const InputPrompt = ({
     }
     setHasSubmitted(true);
     setIsRunning(false);
-    let res = sendPrompt(inputText, oldResponse);
+    saveTimeTaken();
+    let res = sendPrompt(inputText, oldResponse, timeTaken);
+    //console.log("Response sent: ", { inputText, oldResponse, timeTaken });
     setInputText("");
     res.then((response) => {
       if (response) {
         response.type === 'image' ? (setOldResponse(response.prompt.length === 0 ? "" : response.prompt[response.prompt.length - 1])) : (setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]));
-        console.log("Response received: ", response);
+        //console.log("Response received: ", response);
       } else {
         console.error("No response received from sendPrompt");
       }
       setHasSubmitted(false);
-      setIsRunning(true);
-      setTimeLeft(timeLeft);
+      if (response && response.content?.length === 1) setTimeLeft(timeLeft - Math.ceil(timeTaken));
+      setIsRunning(true);      
     });
+  };
+
+  const saveTimeTaken = () => {
+    const startMilliseconds = startTime;
+    const endMilliseconds = Date.now();
+    const timeTakenInSeconds = (endMilliseconds - startMilliseconds) / 1000.0;
+    timeTaken = timeTakenInSeconds;
+    setStartTime(Date.now()); // Reset start time for next input
   };
 
   const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -150,14 +162,16 @@ const InputPrompt = ({
       setInputText(finalTranscript);
       setHasSubmitted(true);
       setIsRunning(false);
-      let res = sendPrompt(transcript, oldResponse);
+      saveTimeTaken();
+      let res = sendPrompt(transcript, oldResponse, timeTaken);
       res.then((response) => {
         if (response) {
           response.type === 'image' ? (setOldResponse(response.prompt.length === 0 ? "" : response.prompt[response.prompt.length - 1])) : (setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]));
-          console.log("Response received: ", response);
+          //console.log("Response received: ", response);
         } else {
           console.error("No response received from sendPrompt");
         }
+        if (response && response.content?.length === 1) setTimeLeft(timeLeft - Math.ceil(timeTaken));
         setIsRunning(true);
         setHasSubmitted(false);
       });
