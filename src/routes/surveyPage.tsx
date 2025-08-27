@@ -15,7 +15,7 @@ const SurveyPage = () => {
         const parsed = JSON.parse(studyData);
         questionType = parsed.questionType;
     }
-    const textOrImage = questionType === "text" ? "text generated" : "image generated";
+    const textOrImage = questionType === "text" ? "text" : "image";
     const likertQuestions = [
         `I felt involved in the ${textOrImage} creation.`,
         `I am the author of the created ${textOrImage}.`,
