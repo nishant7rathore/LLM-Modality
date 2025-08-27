@@ -6,7 +6,7 @@ const InstructionsPage = () => {
     const navigate = useNavigate();
     const instructions = [
         "You will be presented with four different prompting tasks",
-        "Write creative prompts for text or image generation",
+        "Write prompts for text or image generation",
         "Use voice or text input to create prompts",
         "Review the generated content",
         "Refine your prompts and update them as needed",
