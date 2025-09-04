@@ -1,0 +1,37 @@
+{
+  "textQs": {
+    "M": {
+      "0": {
+        "S": "I think typing works just as well as voicing the AI for the prompt, I felt that I was using the same method I did as speaking and they seemed to both turn out similiarly in terms of the end result. "
+      },
+      "1": { "S": "" }
+    }
+  },
+  "nasaTLXQs": {
+    "M": {
+      "0": { "N": "5" },
+      "1": { "N": "4" },
+      "2": { "N": "2" },
+      "3": { "N": "2" },
+      "4": { "N": "5" },
+      "5": { "N": "3" }
+    }
+  },
+  "likertQs": {
+    "M": {
+      "0": { "N": "5" },
+      "1": { "N": "4" },
+      "2": { "N": "5" },
+      "3": { "N": "5" },
+      "4": { "N": "1" },
+      "5": { "N": "5" },
+      "6": { "N": "5" },
+      "7": { "N": "4" },
+      "8": { "N": "3" },
+      "9": { "N": "4" },
+      "10": { "N": "4" },
+      "11": { "N": "2" },
+      "12": { "N": "1" }
+    }
+  }
+}

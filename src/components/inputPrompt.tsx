@@ -7,14 +7,18 @@ import SpeechRecognition, {
 import { usePreventContextMenu } from "../hooks/preventContextMenu";
 
 type ResponseType = {
-    type: 'text' | 'image';
-    content: string[];
-    prompt: string[];
-    timeTaken: number[];
+  type: "text" | "image";
+  content: string[];
+  prompt: string[];
+  timeTaken: number[];
 };
 
 type Props = {
-  sendPrompt: (inputText: string, oldPrompt: string, timeTaken: number) => Promise<ResponseType | null | undefined>;
+  sendPrompt: (
+    inputText: string,
+    oldPrompt: string,
+    timeTaken: number
+  ) => Promise<ResponseType | null | undefined>;
   onContinue: () => void;
   responseGenerated: boolean;
   modality: string;
@@ -37,7 +41,7 @@ const InputPrompt = ({
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
   let timeTaken = 0.0;
-  const TIME = 420;
+  const TIME = 15;
   const [startTime, setStartTime] = useState(Date.now()); // Represents the current local time
   const [timeLeft, setTimeLeft] = useState(TIME);
 
@@ -55,7 +59,8 @@ const InputPrompt = ({
   // Check if a response is selected
   const isContentSelected =
     (response && typeof selectedIdx === "number" && selectedIdx >= 0) ||
-    (response?.content?.length === 1 && (selectedIdx === null || selectedIdx === undefined));
+    (response?.content?.length === 1 &&
+      (selectedIdx === null || selectedIdx === undefined));
 
   usePreventContextMenu();
 
@@ -90,8 +95,8 @@ const InputPrompt = ({
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
 
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, "0");
+    const formattedSeconds = String(remainingSeconds).padStart(2, "0");
 
     return `${formattedMinutes}:${formattedSeconds}`;
   };
@@ -127,14 +132,25 @@ const InputPrompt = ({
     setInputText("");
     res.then((response) => {
       if (response) {
-        response.type === 'image' ? (setOldResponse(response.prompt.length === 0 ? "" : response.prompt[response.prompt.length - 1])) : (setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]));
+        response.type === "image"
+          ? setOldResponse(
+              response.prompt.length === 0
+                ? ""
+                : response.prompt[response.prompt.length - 1]
+            )
+          : setOldResponse(
+              response.content.length === 0
+                ? ""
+                : response.content[response.content.length - 1]
+            );
         //console.log("Response received: ", response);
       } else {
         console.error("No response received from sendPrompt");
       }
       setHasSubmitted(false);
-      if (response && response.content?.length === 1) setTimeLeft(timeLeft - Math.ceil(timeTaken));
-      setIsRunning(true);      
+      if (response && response.content?.length === 1)
+        setTimeLeft(timeLeft - Math.ceil(timeTaken));
+      setIsRunning(true);
     });
   };
 
@@ -164,12 +180,23 @@ const InputPrompt = ({
       let res = sendPrompt(transcript, oldResponse, timeTaken);
       res.then((response) => {
         if (response) {
-          response.type === 'image' ? (setOldResponse(response.prompt.length === 0 ? "" : response.prompt[response.prompt.length - 1])) : (setOldResponse(response.content.length === 0 ? "" : response.content[response.content.length - 1]));
+          response.type === "image"
+            ? setOldResponse(
+                response.prompt.length === 0
+                  ? ""
+                  : response.prompt[response.prompt.length - 1]
+              )
+            : setOldResponse(
+                response.content.length === 0
+                  ? ""
+                  : response.content[response.content.length - 1]
+              );
           //console.log("Response received: ", response);
         } else {
           console.error("No response received from sendPrompt");
         }
-        if (response && response.content?.length === 1) setTimeLeft(timeLeft - Math.ceil(timeTaken));
+        if (response && response.content?.length === 1)
+          setTimeLeft(timeLeft - Math.ceil(timeTaken));
         setIsRunning(true);
         setHasSubmitted(false);
       });
@@ -181,7 +208,10 @@ const InputPrompt = ({
   // Handler for "Continue to Survey" button
   const handleContinueToSurvey = () => {
     // If only one content and nothing is selected, treat as selected and continue
-    if (response?.content?.length === 1 && (selectedIdx === null || selectedIdx === undefined)) {
+    if (
+      response?.content?.length === 1 &&
+      (selectedIdx === null || selectedIdx === undefined)
+    ) {
       onContinue();
     } else if (!isContentSelected) {
       setShowPopup(true);
@@ -194,7 +224,9 @@ const InputPrompt = ({
   const handleClosePopup = () => setShowPopup(false);
 
   // Only show "Continue to Survey" button if timer is over and a response is selected
-  const showContinueButton = responseGenerated && timeLeft === 0 && isContentSelected && !hasSubmitted;
+  const showContinueButton =
+    responseGenerated && timeLeft <= 0 && isContentSelected && !hasSubmitted;
+  
   // Show timer button only if timer is running or time left
   const showTimerButton = responseGenerated && timeLeft > 0 && !hasSubmitted;
 
@@ -327,13 +359,26 @@ const InputPrompt = ({
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <div className="mb-4">
-                <svg className="w-16 h-16 text-pink-400 mx-auto animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                <svg
+                  className="w-16 h-16 text-pink-400 mx-auto animate-bounce"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+                  />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-pink-500 mb-2 text-center">Please select a response!</h2>
+              <h2 className="text-xl font-bold text-pink-500 mb-2 text-center">
+                Please select a response!
+              </h2>
               <p className="text-gray-700 dark:text-gray-200 text-center mb-6">
-                Please select the response that best matches what you intended to create before continuing.
+                Please select the response that best matches what you intended
+                to create before continuing.
               </p>
               <motion.button
                 whileHover={{ scale: 1.08 }}
