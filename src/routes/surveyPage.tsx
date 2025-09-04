@@ -32,6 +32,7 @@ const SurveyPage = () => {
     `I was responsible for the created ${textOrImage}.`,
     `I feel emotionally connected to the created ${textOrImage}.`,
     `I feel personally connected to the created ${textOrImage}.`,
+    `Rate the quality of the produced ${textOrImage}.`
   ];
 
   const textQuestions = [
