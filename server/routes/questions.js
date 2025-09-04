@@ -9,13 +9,14 @@ const QUESTIONS = {
       type: "image",
       modality: "type",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
     {
       text: "Question 1.2",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
     {
       text: "Question 1.3",
@@ -37,14 +38,15 @@ const QUESTIONS = {
       text: "Question 2.1",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
     {
       text: "Question 2.2",
       type: "image",
       modality: "type",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
     {
       text: "Question 2.3",
@@ -81,13 +83,14 @@ const QUESTIONS = {
       type: "image",
       modality: "voice",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
     {
       text: "Question 3.4",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
   ],
   3: [
@@ -109,14 +112,15 @@ const QUESTIONS = {
       text: "Question 4.3",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
     {
       text: "Question 4.4",
       type: "image",
       modality: "voice",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
   ],
   4: [
@@ -124,14 +128,15 @@ const QUESTIONS = {
       text: "Question 5.1",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
     {
       text: "Question 5.2",
       type: "image",
       modality: "voice",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
     {
       text: "Question 5.3",
@@ -154,13 +159,14 @@ const QUESTIONS = {
       type: "image",
       modality: "voice",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
     {
       text: "Question 6.3",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
     {
       text: "Question 6.2",
@@ -196,14 +202,15 @@ const QUESTIONS = {
       text: "Question 7.3",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
     {
       text: "Question 7.4",
       type: "image",
       modality: "type",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
   ],
   7: [
@@ -226,13 +233,14 @@ const QUESTIONS = {
       type: "image",
       modality: "type",
       content:
-        "Create an image representing the scene of your happiest memory.",
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
     },
     {
       text: "Question 8.4",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait that represents how you see yourself.",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
     },
   ],
 };
