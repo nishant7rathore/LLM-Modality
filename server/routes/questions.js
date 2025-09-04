@@ -8,13 +8,14 @@ const QUESTIONS = {
       text: "Question 1.1",
       type: "image",
       modality: "type",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
     {
       text: "Question 1.2",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
     {
       text: "Question 1.3",
@@ -36,13 +37,14 @@ const QUESTIONS = {
       text: "Question 2.1",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
     {
       text: "Question 2.2",
       type: "image",
       modality: "type",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
     {
       text: "Question 2.3",
@@ -78,13 +80,14 @@ const QUESTIONS = {
       text: "Question 3.3",
       type: "image",
       modality: "voice",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
     {
       text: "Question 3.4",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
   ],
   3: [
@@ -106,13 +109,14 @@ const QUESTIONS = {
       text: "Question 4.3",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
     {
       text: "Question 4.4",
       type: "image",
       modality: "voice",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
   ],
   4: [
@@ -120,13 +124,14 @@ const QUESTIONS = {
       text: "Question 5.1",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
     {
       text: "Question 5.2",
       type: "image",
       modality: "voice",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
     {
       text: "Question 5.3",
@@ -148,13 +153,14 @@ const QUESTIONS = {
       text: "Question 6.1",
       type: "image",
       modality: "voice",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
     {
       text: "Question 6.3",
       type: "image",
       modality: "type",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
     {
       text: "Question 6.2",
@@ -190,13 +196,14 @@ const QUESTIONS = {
       text: "Question 7.3",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
     {
       text: "Question 7.4",
       type: "image",
       modality: "type",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
   ],
   7: [
@@ -218,13 +225,14 @@ const QUESTIONS = {
       text: "Question 8.3",
       type: "image",
       modality: "type",
-      content: "Create an image of your happiest memory.",
+      content:
+        "Create an image representing the scene of your happiest memory.",
     },
     {
       text: "Question 8.4",
       type: "image",
       modality: "voice",
-      content: "Create a self-portrait.",
+      content: "Create a self-portrait that represents how you see yourself.",
     },
   ],
 };

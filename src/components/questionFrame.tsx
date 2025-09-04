@@ -49,8 +49,7 @@ const Question = ({ question }: { question: QuestionType }) => {
             <>
               <div className="w-full">
                 <div className="text-lg text-gray-800 mb-2">
-                  Collaborate with the AI to create an image that can accurately
-                  represent your vision for the following.
+                  Collaborate with the AI to create an image.
                 </div>
                 <div className="text-md text-gray-900 italic bg-white rounded px-3 py-2 border border-purple-100 shadow-sm">
                   {question.content}
