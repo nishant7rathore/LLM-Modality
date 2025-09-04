@@ -41,7 +41,7 @@ const InputPrompt = ({
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
   let timeTaken = 0.0;
-  const TIME = 15;
+  const TIME = 420;
   const [startTime, setStartTime] = useState(Date.now()); // Represents the current local time
   const [timeLeft, setTimeLeft] = useState(TIME);
 
@@ -226,7 +226,7 @@ const InputPrompt = ({
   // Only show "Continue to Survey" button if timer is over and a response is selected
   const showContinueButton =
     responseGenerated && timeLeft <= 0 && isContentSelected && !hasSubmitted;
-  
+
   // Show timer button only if timer is running or time left
   const showTimerButton = responseGenerated && timeLeft > 0 && !hasSubmitted;
 
