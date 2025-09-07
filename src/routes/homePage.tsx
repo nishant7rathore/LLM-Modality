@@ -35,7 +35,7 @@ const HomePage = () => {
         localStorage.setItem("order", order);
         localStorage.setItem("currentQuestionIndex", "0");
         // Navigating to the question page
-        navigate("/instructions");
+        navigate("/consent");
 
         // Using localstorage for building a data object to send to the backend
         localStorage.setItem(
@@ -44,7 +44,7 @@ const HomePage = () => {
             userID: userID,
             questionID: 0,
             questionType: "",
-            modality:"",
+            modality: "",
             prompt: "",
             response: "",
             surveyAnswers: null,

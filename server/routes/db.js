@@ -52,4 +52,35 @@ router.post("/db", authenticateToken, async (req, res) => {
   }
 });
 
+// Save demographic data to DynamoDB
+router.post("/demographic", authenticateToken, async (req, res) => {
+  const demographicData = req.body;
+  console.log("Received Demographic Data: ", demographicData);
+
+  // You can use participantId as the partition key, or userID if available
+  const params = {
+    TableName: process.env.DDB_DEMO_TABLE_NAME,
+    Item: {
+      dataType: "demographic", // To distinguish from studyData
+      userID: demographicData.participantId,
+      age: demographicData.age,
+      gender: demographicData.gender,
+      genderSelfDescription: demographicData.genderSelfDescription,
+      llmFamiliarity: demographicData.llmFamiliarity,
+      llmUsage: demographicData.llmUsage,
+      llmReason: demographicData.llmReason,
+      createdAt: new Date().toISOString(),
+    },
+  };
+
+  try {
+    await documentClient.send(new PutCommand(params));
+    console.log("Demographic data written to the database");
+    res.status(200).send("Demographic data written successfully");
+  } catch (error) {
+    console.log("Error: ", error);
+    res.status(500).send("Error writing demographic data to the database");
+  }
+});
+
 module.exports = router;
