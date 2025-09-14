@@ -32,7 +32,7 @@ const SurveyPage = () => {
     `I was responsible for the created ${textOrImage}.`,
     `I feel emotionally connected to the created ${textOrImage}.`,
     `I feel personally connected to the created ${textOrImage}.`,
-    `Rate the quality of the created ${textOrImage}.`
+    `Rate the quality of the created ${textOrImage}.`,
   ];
 
   const textQuestions = [
@@ -50,40 +50,41 @@ const SurveyPage = () => {
   ];
 
   // Setting up initial state for the survey questions
-  const [likertQs, setLikertQs] = useState<{ [key: number]: number }>(() => {
-    const initialValues: { [key: number]: number } = {};
-    for (let i = 0; i < likertQuestions.length; i++) {
-      initialValues[i] = 3;
+  const [likertQs, setLikertQs] = useState<{ [key: string]: number }>(() => {
+    const initialValues: { [key: string]: number } = {};
+    for (const question of likertQuestions) {
+      initialValues[question] = 3;
     }
     return initialValues;
   });
 
-  const [textQs, setTextQs] = useState<{ [key: number]: string }>(() => {
-    const initialValues: { [key: number]: string } = {};
-    for (let i = 0; i < textQuestions.length; i++) {
-      initialValues[i] = "";
+  const [textQs, setTextQs] = useState<{ [key: string]: string }>(() => {
+    const initialValues: { [key: string]: string } = {};
+    for (const question of textQuestions) {
+      initialValues[question] = "";
     }
     return initialValues;
   });
 
-  const [nasaTLXQs, setNasaTLXQs] = useState<{ [key: number]: number }>(() => {
-    const initialValues: { [key: number]: number } = {};
-    for (let i = 0; i < nasaTLXQuestions.length; i++) {
-      initialValues[i] = 3;
+  const [nasaTLXQs, setNasaTLXQs] = useState<{ [key: string]: number }>(() => {
+    const initialValues: { [key: string]: number } = {};
+    for (const question of nasaTLXQuestions) {
+      initialValues[question] = 3;
     }
     return initialValues;
   });
 
-  const handleLikertChange = (qIndex: number, value: number) => {
-    setLikertQs((prev) => ({ ...prev, [qIndex]: value }));
+  // 2. Update handlers to use question text as key
+  const handleLikertChange = (question: string, value: number) => {
+    setLikertQs((prev) => ({ ...prev, [question]: value }));
   };
 
-  const handleTextChange = (qIndex: number, value: string) => {
-    setTextQs((prev) => ({ ...prev, [qIndex]: value }));
+  const handleTextChange = (question: string, value: string) => {
+    setTextQs((prev) => ({ ...prev, [question]: value }));
   };
 
-  const handleNasaTLXChange = (qIndex: number, value: number) => {
-    setNasaTLXQs((prev) => ({ ...prev, [qIndex]: value }));
+  const handleNasaTLXChange = (question: string, value: number) => {
+    setNasaTLXQs((prev) => ({ ...prev, [question]: value }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -159,7 +160,7 @@ const SurveyPage = () => {
             </h2>
             {likertQuestions.map((question, index) => (
               <motion.div
-                key={index}
+                key={question}
                 variants={questionVariants}
                 initial="initial"
                 animate="animate"
@@ -173,9 +174,9 @@ const SurveyPage = () => {
                     min={1}
                     max={5}
                     step={1}
-                    value={likertQs[index] || 3}
+                    value={likertQs[question] || 3}
                     onChange={(e) =>
-                      handleLikertChange(index, parseInt(e.target.value))
+                      handleLikertChange(question, parseInt(e.target.value))
                     }
                     className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
                   />
@@ -205,7 +206,7 @@ const SurveyPage = () => {
             </h2>
             {nasaTLXQuestions.map((question, index) => (
               <motion.div
-                key={index}
+                key={question}
                 variants={questionVariants}
                 initial="initial"
                 animate="animate"
@@ -219,9 +220,9 @@ const SurveyPage = () => {
                     min={1}
                     max={5}
                     step={1}
-                    value={nasaTLXQs[index] || 3}
+                    value={nasaTLXQs[question] || 3}
                     onChange={(e) =>
-                      handleNasaTLXChange(index, parseInt(e.target.value))
+                      handleNasaTLXChange(question, parseInt(e.target.value))
                     }
                     className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
                   />
@@ -254,7 +255,7 @@ const SurveyPage = () => {
               : textQuestions
             ).map((question, index) => (
               <motion.div
-                key={index}
+                key={question}
                 variants={questionVariants}
                 initial="initial"
                 animate="animate"
@@ -269,12 +270,8 @@ const SurveyPage = () => {
                 <motion.textarea
                   whileFocus={{ scale: 1.01 }}
                   rows={4}
-                  onChange={(e) =>
-                    handleTextChange(
-                      questionID === 0 || questionID === 2 ? index + 1 : index,
-                      e.target.value
-                    )
-                  }
+                  value={textQs[question] || ""}
+                  onChange={(e) => handleTextChange(question, e.target.value)}
                   className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="Type your answer here..."
                 />
