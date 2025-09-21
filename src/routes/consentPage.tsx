@@ -167,14 +167,14 @@ const ConsentPage = () => {
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg p-6 mb-6 bg-gray-50"
-          style={{ minHeight: "200px" }}
+          className="max-h-[32rem] overflow-y-auto border border-gray-200 rounded-lg p-10 mb-10 bg-gray-50 text-left"
+          style={{ minHeight: "250px", lineHeight: "2" }}
         >
-          <div className="prose prose-blue max-w-none">
+          <div className="prose prose-blue max-w-none prose-lg prose-p:mb-8 prose-h2:mt-12 prose-h2:mb-6 prose-h3:mt-10 prose-h3:mb-4 prose-li:mb-3 prose-ul:mb-8 prose-ol:mb-8 prose-headings:text-left prose-p:text-left prose-ul:text-left prose-ol:text-left">
             <ReactMarkdown>{consentText}</ReactMarkdown>
           </div>
         </div>
-        <div className="flex items-center space-x-3 mb-6">
+        <div className="flex items-center space-x-3 mb-8">
           <input
             type="checkbox"
             id="consent"

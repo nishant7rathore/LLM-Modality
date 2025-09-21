@@ -35,10 +35,29 @@ const SurveyPage = () => {
     `Rate the quality of the created ${textOrImage}.`,
   ];
 
+  const likertQuestionsDBNames = [
+    `Involved`,
+    `AuthorCreated`,
+    `Effort`,
+    `OriginalWork`,
+    `CopiedWork`,
+    `SignificantContribution`,
+    `AIContribution`,
+    `ControlledCreation`,
+    `AIControlledCreation`,
+    `PersonalOwnership`,
+    `Responsible`,
+    `EmotionallyConnected`,
+    `PersonallyConnected`,
+    `RateQuality`,
+  ];
+
   const textQuestions = [
     "Which method did you prefer to write generative AI prompts for? Why or why not?",
     "Do you have any additional comments you would like to share?",
   ];
+
+  const textQuestionsDBNames = ["PreferredMethod", "AdditionalComments"];
 
   const nasaTLXQuestions = [
     "Mental Demand: How mentally demanding was the task?",
@@ -47,6 +66,14 @@ const SurveyPage = () => {
     "Performance: How successful were you in accomplishing what you were asked to do?",
     "Effort: How hard did you have to work to accomplish your level of performance?",
     "Frustration: How insecure, discouraged, irritated, stressed, and annoyed were you?",
+  ];
+  const nasaTLXQuestionsDBNames = [
+    "MentalDemand",
+    "PhysicalDemand",
+    "TemporalDemand",
+    "Performance",
+    "Effort",
+    "Frustration",
   ];
 
   // Setting up initial state for the survey questions
@@ -90,16 +117,35 @@ const SurveyPage = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Store the survey answers in localStorage
+    // Use DB names as keys for survey answers
+    const surveyAnswers: Record<string, number | string> = {};
+
+    // Likert questions
+    likertQuestionsDBNames.forEach((dbName, idx) => {
+      const questionText = likertQuestions[idx];
+      surveyAnswers[dbName] = likertQs[questionText];
+    });
+
+    // NASA TLX questions
+    nasaTLXQuestionsDBNames.forEach((dbName, idx) => {
+      const questionText = nasaTLXQuestions[idx];
+      surveyAnswers[dbName] = nasaTLXQs[questionText];
+    });
+
+    // Text questions
+    textQuestionsDBNames.forEach((dbName, idx) => {
+      const questionText = textQuestions[idx];
+      surveyAnswers[dbName] = textQs[questionText];
+    });
+
     localStorage.setItem(
       "studyData",
       JSON.stringify({
         ...JSON.parse(localStorage.getItem("studyData") || "{}"),
-        surveyAnswers: { likertQs, textQs, nasaTLXQs },
+        ...surveyAnswers,
       })
     );
 
-    // Send the whole data for the question to the backend
     await sendStudyData(localStorage.getItem("studyData"));
 
     // Navigate to next question or end of survey (HARDCODED TO 5 QUESTIONS)

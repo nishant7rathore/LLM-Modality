@@ -21,22 +21,76 @@ const documentClient = DynamoDBDocumentClient.from(client);
 // Write data to DynamoDB
 router.post("/db", authenticateToken, async (req, res) => {
   const studyData = req.body;
-  console.log("Recieved Data: ", studyData);
+  console.log("Received Data: ", studyData);
 
-  // Define the parameters
+  // Build the Item object dynamically, including all fields from studyData
+  const {
+    userID,
+    questionID,
+    questionType,
+    modality,
+    prompt,
+    content,
+    response,
+    selectedIdx,
+    timeTaken,
+    Involved,
+    AuthorCreated,
+    Effort,
+    OriginalWork,
+    CopiedWork,
+    SignificantContribution,
+    AIContribution,
+    ControlledCreation,
+    AIControlledCreation,
+    PersonalOwnership,
+    Responsible,
+    EmotionallyConnected,
+    PersonallyConnected,
+    RateQuality,
+    MentalDemand,
+    PhysicalDemand,
+    TemporalDemand,
+    Performance,
+    Frustration,
+    PreferredMethod,
+    AdditionalComments,
+    // ...add any other fields you expect
+  } = studyData;
+
   const params = {
     TableName: process.env.DDB_TABLE_NAME,
     Item: {
-      userID: studyData.userID,
-      // convert questionID to string
-      questionID: studyData.questionID.toString(),
-      questionType: studyData.questionType.toString(),
-      modality: studyData.modality.toString(),
-      prompt: studyData.prompt,
-      content: studyData.content,
-      response: studyData.response,
-      selectedIdx: studyData.selectedIdx,
-      surveyAnswers: studyData.surveyAnswers,
+      userID,
+      questionID: questionID?.toString(),
+      questionType: questionType?.toString(),
+      modality: modality?.toString(),
+      prompt,
+      content,
+      response,
+      selectedIdx,
+      timeTaken,
+      Involved,
+      AuthorCreated,
+      Effort,
+      OriginalWork,
+      CopiedWork,
+      SignificantContribution,
+      AIContribution,
+      ControlledCreation,
+      AIControlledCreation,
+      PersonalOwnership,
+      Responsible,
+      EmotionallyConnected,
+      PersonallyConnected,
+      RateQuality,
+      MentalDemand,
+      PhysicalDemand,
+      TemporalDemand,
+      Performance,
+      Frustration,
+      PreferredMethod,
+      AdditionalComments,
       createdAt: new Date().toISOString(),
     },
   };
