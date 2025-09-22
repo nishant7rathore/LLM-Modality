@@ -19,37 +19,27 @@ const SurveyPage = () => {
   }
   const textOrImage = questionType === "text" ? "text" : "image";
   const likertQuestions = [
-    `I felt involved in the ${textOrImage} creation.`,
-    `I am the author of the created ${textOrImage}.`,
-    `I provided significant effort to create the ${textOrImage}.`,
+    `I feel that the created ${textOrImage} is mine.`,
+    `I am responsible for the created ${textOrImage}.`,
+    `I feel that the created ${textOrImage} is mine, even if the AI contributed to its development.`,
     `The created ${textOrImage} is my original work.`,
     `I copied someone else’s work to create the ${textOrImage}.`,
     `I contributed significantly to the ${textOrImage} creation.`,
     `The AI system contributed significantly to the ${textOrImage} creation.`,
     `I controlled the ${textOrImage} creation.`,
     `The AI controlled the ${textOrImage} creation.`,
-    `I personally own the created ${textOrImage}.`,
-    `I was responsible for the created ${textOrImage}.`,
-    `I feel emotionally connected to the created ${textOrImage}.`,
-    `I feel personally connected to the created ${textOrImage}.`,
-    `Rate the quality of the created ${textOrImage}.`,
   ];
 
   const likertQuestionsDBNames = [
-    `Involved`,
-    `AuthorCreated`,
-    `Effort`,
+    `IFeelOwnership`,
+    `IAmResponsible`,
+    `IFeelOwnershipEvenIfAIContributed`,
     `OriginalWork`,
     `CopiedWork`,
     `SignificantContribution`,
     `AIContribution`,
     `ControlledCreation`,
     `AIControlledCreation`,
-    `PersonalOwnership`,
-    `Responsible`,
-    `EmotionallyConnected`,
-    `PersonallyConnected`,
-    `RateQuality`,
   ];
 
   const qualityQuestions = [
@@ -58,13 +48,13 @@ const SurveyPage = () => {
     `The style of the ${textOrImage} was appropriate.`,
     `The ${textOrImage} was clear.`,
     `The ${textOrImage} included unnecessary detail.`,
-    `I was satisfied with the ${textOrImage}.`,
+    `I was satisfied with the created ${textOrImage}.`,
     `The ${textOrImage} was what I asked for.`,
     `The ${textOrImage} met my expectations.`,
     `The ${textOrImage} was accurate.`,
-    `It took the AI too long to generate each ${textOrImage}.`,
-    `It took too many revisions for the AI to create ${textOrImage}.`,
     `The ${textOrImage} was relevant to the prompt.`,
+    `It took the AI too long to generate each ${textOrImage}.`,
+    `It took too many revisions for the AI to create the ${textOrImage}.`,
   ];
 
   const qualityQuestionsDBNames = [
@@ -77,9 +67,9 @@ const SurveyPage = () => {
     `WhatIAskedFor`,
     `MetExpectations`,
     `Accurate`,
+    `Relevant`,
     `TookTooLong`,
     `TooManyRevisions`,
-    `Relevant`,
   ];
 
   const textQuestions = [

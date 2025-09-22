@@ -93,7 +93,7 @@ const InputPrompt = ({
   useEffect(() => {
     setStartTime(Date.now());
     setTimeLeft(TIME);
-    setIsRunning(true); // Optionally start timer automatically
+    setIsRunning(false); // <-- Do NOT start timer automatically
     setHasSubmitted(false);
     setInputText("");
     setHasListened(false);
