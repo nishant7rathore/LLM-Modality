@@ -43,7 +43,7 @@ const InputPrompt = ({
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
   let timeTaken = 0.0;
-  const TIME = 30;
+  const TIME = 300;
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
 

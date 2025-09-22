@@ -100,7 +100,7 @@ const SurveyPage = () => {
   const [likertQs, setLikertQs] = useState<{ [key: string]: number }>(() => {
     const initialValues: { [key: string]: number } = {};
     for (const question of likertQuestions) {
-      initialValues[question] = 3;
+      initialValues[question] = 4;
     }
     return initialValues;
   });
@@ -116,7 +116,7 @@ const SurveyPage = () => {
   const [nasaTLXQs, setNasaTLXQs] = useState<{ [key: string]: number }>(() => {
     const initialValues: { [key: string]: number } = {};
     for (const question of nasaTLXQuestions) {
-      initialValues[question] = 3;
+      initialValues[question] = 4;
     }
     return initialValues;
   });
@@ -124,7 +124,7 @@ const SurveyPage = () => {
   const [qualityQs, setQualityQs] = useState<{ [key: string]: number }>(() => {
     const initialValues: { [key: string]: number } = {};
     for (const question of qualityQuestions) {
-      initialValues[question] = 3;
+      initialValues[question] = 4;
     }
     return initialValues;
   });
