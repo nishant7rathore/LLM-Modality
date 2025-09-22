@@ -39,7 +39,6 @@ const QuestionPage = () => {
 
   // Function to fetch the question from the backend
   useEffect(() => {
-    
     const fetchQuestions = async () => {
       const order = localStorage.getItem("order");
       const token = localStorage.getItem("token");
@@ -65,24 +64,32 @@ const QuestionPage = () => {
     fetchQuestions();
   }, []);
 
-  const addResponse = (newPrompt: string, newContent: string | string[], type: "text" | "image", timeTaken: number) => {
+  const addResponse = (
+    newPrompt: string,
+    newContent: string | string[],
+    type: "text" | "image",
+    timeTaken: number
+  ) => {
     const prevPrompt = responseRef.current?.prompt ?? [];
     const prevContent = responseRef.current?.content ?? [];
     const prevTimeTaken = responseRef.current?.timeTaken ?? [];
     // Ensure newContent is always an array
     const newContentArr = Array.isArray(newContent) ? newContent : [newContent];
-    const response: ResponseType = { 
+    const response: ResponseType = {
       type,
       prompt: [...prevPrompt, newPrompt],
       content: [...prevContent, ...newContentArr],
-      timeTaken: [...prevTimeTaken, timeTaken]
+      timeTaken: [...prevTimeTaken, timeTaken],
     };
     setResponse(response);
     responseRef.current = response;
   };
 
-
-  const sendPrompt = async (inputText: string, oldResponse: string, timeTaken: number): Promise<ResponseType | null> => {
+  const sendPrompt = async (
+    inputText: string,
+    oldResponse: string,
+    timeTaken: number
+  ): Promise<ResponseType | null> => {
     const token = localStorage.getItem("token");
     const order = localStorage.getItem("order");
     if (!token) {
@@ -98,7 +105,12 @@ const QuestionPage = () => {
         ? `${process.env.REACT_APP_BACKEND_HOST_URL}/api/dalle`
         : `${process.env.REACT_APP_BACKEND_HOST_URL}/api/text`;
       const payload = isImage
-        ? { prompt: inputText, questionID: currentQuestionIndex, order: order, oldResponse: oldResponse }
+        ? {
+            prompt: inputText,
+            questionID: currentQuestionIndex,
+            order: order,
+            oldResponse: oldResponse,
+          }
         : { prompt: inputText, oldResponse: oldResponse };
 
       const res = await axios.post(url, payload, {
@@ -158,13 +170,22 @@ const QuestionPage = () => {
   return (
     <div className="App min-h-screen pb-32">
       <Question question={questions[currentQuestionIndex]} />
-      <Display response={response} isLoading={responseLoading} selectedIdx={selectedIdx} setSelectedIdx={setSelectedIdx}/>
+      <Display
+        response={response}
+        isLoading={responseLoading}
+        selectedIdx={selectedIdx}
+        setSelectedIdx={setSelectedIdx}
+      />
       <InputPrompt
-        sendPrompt={(inputText: string, oldPrompt: string, timeTaken: number) => sendPrompt(inputText, oldPrompt, timeTaken)}
+        sendPrompt={(inputText: string, oldPrompt: string, timeTaken: number) =>
+          sendPrompt(inputText, oldPrompt, timeTaken)
+        }
         onContinue={() => handleContinue()}
         responseGenerated={response !== null}
         modality={questions[currentQuestionIndex].modality}
-        response={response} selectedIdx={selectedIdx}
+        response={response}
+        selectedIdx={selectedIdx}
+        questionID={currentQuestionIndex}
       />
     </div>
   );

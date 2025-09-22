@@ -25,6 +25,7 @@ type Props = {
   response: ResponseType | null;
   isLoading?: boolean;
   selectedIdx: number | null;
+  questionID: number;
 };
 
 const InputPrompt = ({
@@ -34,6 +35,7 @@ const InputPrompt = ({
   modality,
   response,
   selectedIdx,
+  questionID,
 }: Props) => {
   const [inputText, setInputText] = useState<string>("");
   const [oldResponse, setOldResponse] = useState<string>("");
@@ -42,7 +44,7 @@ const InputPrompt = ({
   const [isRunning, setIsRunning] = useState(false);
   let timeTaken = 0.0;
   const TIME = 30;
-  const [startTime, setStartTime] = useState(Date.now()); // Represents the current local time
+  const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
 
   // New state for popup
@@ -86,6 +88,17 @@ const InputPrompt = ({
       setInputText(transcript);
     }
   }, [transcript, listening, modality]);
+
+  // Reset timer when questionID changes
+  useEffect(() => {
+    setStartTime(Date.now());
+    setTimeLeft(TIME);
+    setIsRunning(true); // Optionally start timer automatically
+    setHasSubmitted(false);
+    setInputText("");
+    setHasListened(false);
+    resetTranscript();
+  }, [questionID, resetTranscript]);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
