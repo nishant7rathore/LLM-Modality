@@ -52,6 +52,36 @@ const SurveyPage = () => {
     `RateQuality`,
   ];
 
+  const qualityQuestions = [
+    `The ${textOrImage} was coherent.`,
+    `The tone of the ${textOrImage} was appropriate.`,
+    `The style of the ${textOrImage} was appropriate.`,
+    `The ${textOrImage} was clear.`,
+    `The ${textOrImage} included unnecessary detail.`,
+    `I was satisfied with the ${textOrImage}.`,
+    `The ${textOrImage} was what I asked for.`,
+    `The ${textOrImage} met my expectations.`,
+    `The ${textOrImage} was accurate.`,
+    `It took the AI too long to generate each ${textOrImage}.`,
+    `It took too many revisions for the AI to create ${textOrImage}.`,
+    `The ${textOrImage} was relevant to the prompt.`,
+  ];
+
+  const qualityQuestionsDBNames = [
+    `Coherent`,
+    `AppropriateTone`,
+    `AppropriateStyle`,
+    `Clarity`,
+    `UnnecessaryDetail`,
+    `Satisfied`,
+    `WhatIAskedFor`,
+    `MetExpectations`,
+    `Accurate`,
+    `TookTooLong`,
+    `TooManyRevisions`,
+    `Relevant`,
+  ];
+
   const textQuestions = [
     "Which method did you prefer to write generative AI prompts for? Why or why not?",
     "Do you have any additional comments you would like to share?",
@@ -101,6 +131,14 @@ const SurveyPage = () => {
     return initialValues;
   });
 
+  const [qualityQs, setQualityQs] = useState<{ [key: string]: number }>(() => {
+    const initialValues: { [key: string]: number } = {};
+    for (const question of qualityQuestions) {
+      initialValues[question] = 3;
+    }
+    return initialValues;
+  });
+
   // 2. Update handlers to use question text as key
   const handleLikertChange = (question: string, value: number) => {
     setLikertQs((prev) => ({ ...prev, [question]: value }));
@@ -112,6 +150,10 @@ const SurveyPage = () => {
 
   const handleNasaTLXChange = (question: string, value: number) => {
     setNasaTLXQs((prev) => ({ ...prev, [question]: value }));
+  };
+
+  const handleQualityChange = (question: string, value: number) => {
+    setQualityQs((prev) => ({ ...prev, [question]: value }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -137,6 +179,15 @@ const SurveyPage = () => {
       const questionText = textQuestions[idx];
       surveyAnswers[dbName] = textQs[questionText];
     });
+
+    //Quality questions
+    qualityQuestionsDBNames.forEach((dbName, idx) => {
+      const questionText = qualityQuestions[idx];
+      surveyAnswers[dbName] = qualityQs[questionText];
+    });
+
+    // Merge with existing study data in local storage
+    // and save back to local storage
 
     localStorage.setItem(
       "studyData",
@@ -218,7 +269,7 @@ const SurveyPage = () => {
                   <input
                     type="range"
                     min={1}
-                    max={5}
+                    max={7}
                     step={1}
                     value={likertQs[question] || 3}
                     onChange={(e) =>
@@ -227,7 +278,7 @@ const SurveyPage = () => {
                     className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
                   />
                   <div className="flex justify-between mt-2">
-                    {[1, 2, 3, 4, 5].map((value) => (
+                    {[1, 2, 3, 4, 5, 6, 7].map((value) => (
                       <div key={value} className="flex flex-col items-center">
                         <div className="h-3 w-px bg-gray-300" />
                         <span className="text-sm text-gray-600 mt-1">
@@ -264,7 +315,7 @@ const SurveyPage = () => {
                   <input
                     type="range"
                     min={1}
-                    max={5}
+                    max={7}
                     step={1}
                     value={nasaTLXQs[question] || 3}
                     onChange={(e) =>
@@ -273,7 +324,53 @@ const SurveyPage = () => {
                     className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
                   />
                   <div className="flex justify-between mt-2">
-                    {[1, 2, 3, 4, 5].map((value) => (
+                    {[1, 2, 3, 4, 5, 6, 7].map((value) => (
+                      <div key={value} className="flex flex-col items-center">
+                        <div className="h-3 w-px bg-gray-300" />
+                        <span className="text-sm text-gray-600 mt-1">
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-600 mt-2">
+                    <span>Very Low</span>
+                    <span>Very High</span>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </motion.section>
+
+          {/* Quality Questions */}
+          <motion.section className="space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Quality Assessment
+            </h2>
+            {qualityQuestions.map((question, index) => (
+              <motion.div
+                key={question}
+                variants={questionVariants}
+                initial="initial"
+                animate="animate"
+                transition={{ delay: (qualityQuestions.length + index) * 0.1 }}
+                className="bg-gray-50 rounded-lg p-6 shadow-sm"
+              >
+                <p className="mb-4 text-gray-700">{question}</p>
+                <motion.div className="w-full">
+                  <input
+                    type="range"
+                    min={1}
+                    max={7}
+                    step={1}
+                    value={qualityQs[question] || 3}
+                    onChange={(e) =>
+                      handleQualityChange(question, parseInt(e.target.value))
+                    }
+                    className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <div className="flex justify-between mt-2">
+                    {[1, 2, 3, 4, 5, 6, 7].map((value) => (
                       <div key={value} className="flex flex-col items-center">
                         <div className="h-3 w-px bg-gray-300" />
                         <span className="text-sm text-gray-600 mt-1">
