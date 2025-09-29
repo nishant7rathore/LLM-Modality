@@ -22,6 +22,7 @@ type Props = {
   onContinue: () => void;
   responseGenerated: boolean;
   modality: string;
+  questionType: string;
   response: ResponseType | null;
   isLoading?: boolean;
   selectedIdx: number | null;
@@ -33,6 +34,7 @@ const InputPrompt = ({
   onContinue,
   responseGenerated,
   modality,
+  questionType,
   response,
   selectedIdx,
   questionID,
@@ -43,7 +45,10 @@ const InputPrompt = ({
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
   let timeTaken = 0.0;
-  const TIME = 300;
+
+  // Set TIME based on questionType
+  const TIME = questionType === "image" ? 8 * 60 : 5 * 60;
+
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
 
@@ -98,7 +103,7 @@ const InputPrompt = ({
     setInputText("");
     setHasListened(false);
     resetTranscript();
-  }, [questionID, resetTranscript]);
+  }, [questionID, resetTranscript, TIME]);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -129,6 +134,7 @@ const InputPrompt = ({
       return;
     }
     setInputText(event.target.value);
+    if (!isRunning && timeLeft > 0) setIsRunning(true); // Start timer on first input
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -138,10 +144,8 @@ const InputPrompt = ({
       return;
     }
     setHasSubmitted(true);
-    setIsRunning(false);
     saveTimeTaken();
     let res = sendPrompt(inputText, oldResponse, timeTaken);
-    //console.log("Response sent: ", { inputText, oldResponse, timeTaken });
     setInputText("");
     res.then((response) => {
       if (response) {
@@ -161,9 +165,7 @@ const InputPrompt = ({
         console.error("No response received from sendPrompt");
       }
       setHasSubmitted(false);
-      if (response && response.content?.length === 1)
-        setTimeLeft(timeLeft - Math.ceil(timeTaken));
-      setIsRunning(true);
+      // setIsRunning(true); // You don't need to set this here, timer should keep running
     });
   };
 
@@ -175,20 +177,16 @@ const InputPrompt = ({
     setStartTime(Date.now()); // Reset start time for next input
   };
 
-  const onPause = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setIsRunning(!isRunning);
-  };
-
   const HandleMicButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!hasListened) {
       setInputText("");
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
+      if (!isRunning && timeLeft > 0) setIsRunning(true); // Start timer on first mic
     } else {
       SpeechRecognition.stopListening();
       setInputText(finalTranscript);
       setHasSubmitted(true);
-      setIsRunning(false);
       saveTimeTaken();
       let res = sendPrompt(transcript, oldResponse, timeTaken);
       res.then((response) => {
@@ -204,14 +202,11 @@ const InputPrompt = ({
                   ? ""
                   : response.content[response.content.length - 1]
               );
-          //console.log("Response received: ", response);
         } else {
           console.error("No response received from sendPrompt");
         }
-        if (response && response.content?.length === 1)
-          setTimeLeft(timeLeft - Math.ceil(timeTaken));
-        setIsRunning(true);
         setHasSubmitted(false);
+        // Do NOT set isRunning here, let it keep running!
       });
     }
     setInputText("");
@@ -321,7 +316,6 @@ const InputPrompt = ({
           {/* Timer button: only show while timer is running and no response is selected */}
           {showTimerButton && (
             <motion.button
-              onClick={onPause}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}

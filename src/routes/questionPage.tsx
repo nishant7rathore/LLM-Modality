@@ -183,6 +183,7 @@ const QuestionPage = () => {
         onContinue={() => handleContinue()}
         responseGenerated={response !== null}
         modality={questions[currentQuestionIndex].modality}
+        questionType={questions[currentQuestionIndex].type}
         response={response}
         selectedIdx={selectedIdx}
         questionID={currentQuestionIndex}
