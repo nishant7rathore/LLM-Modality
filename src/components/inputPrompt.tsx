@@ -47,7 +47,7 @@ const InputPrompt = ({
   let timeTaken = 0.0;
 
   // Set TIME based on questionType
-  const TIME = questionType === "image" ? 10 * 60 : 5 * 60;
+  const TIME = questionType === "image" ? 8 * 60 : 5 * 60;
 
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
@@ -147,7 +147,7 @@ const InputPrompt = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
+    responseGenerated = false;
     if (hasSubmitted) {
       return;
     }
@@ -172,6 +172,7 @@ const InputPrompt = ({
       } else {
         console.error("No response received from sendPrompt");
       }
+      responseGenerated = true;
       setHasSubmitted(false);
       // setIsRunning(true); // You don't need to set this here, timer should keep running
     });
@@ -195,6 +196,7 @@ const InputPrompt = ({
       SpeechRecognition.stopListening();
       setInputText(finalTranscript);
       setHasSubmitted(true);
+      responseGenerated = false;
       saveTimeTaken();
       let res = sendPrompt(transcript, oldResponse, timeTaken);
       res.then((response) => {
@@ -214,6 +216,7 @@ const InputPrompt = ({
           console.error("No response received from sendPrompt");
         }
         setHasSubmitted(false);
+        responseGenerated = true;
         // Do NOT set isRunning here, let it keep running!
       });
     }
