@@ -87,7 +87,7 @@ const QuestionPage = () => {
 
   const sendPrompt = async (
     inputText: string,
-    oldResponse: string,
+    oldPrompts: string,
     timeTaken: number
   ): Promise<ResponseType | null> => {
     const token = localStorage.getItem("token");
@@ -109,9 +109,9 @@ const QuestionPage = () => {
             prompt: inputText,
             questionID: currentQuestionIndex,
             order: order,
-            oldResponse: oldResponse,
+            oldPrompts: oldPrompts,
           }
-        : { prompt: inputText, oldResponse: oldResponse };
+        : { prompt: inputText, oldPrompts: oldPrompts };
 
       const res = await axios.post(url, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -177,9 +177,11 @@ const QuestionPage = () => {
         setSelectedIdx={setSelectedIdx}
       />
       <InputPrompt
-        sendPrompt={(inputText: string, oldPrompt: string, timeTaken: number) =>
-          sendPrompt(inputText, oldPrompt, timeTaken)
-        }
+        sendPrompt={(
+          inputText: string,
+          oldPrompts: string,
+          timeTaken: number
+        ) => sendPrompt(inputText, oldPrompts, timeTaken)}
         onContinue={() => handleContinue()}
         responseGenerated={response !== null}
         modality={questions[currentQuestionIndex].modality}

@@ -16,7 +16,7 @@ type ResponseType = {
 type Props = {
   sendPrompt: (
     inputText: string,
-    oldPrompt: string,
+    oldPrompts: string,
     timeTaken: number
   ) => Promise<ResponseType | null | undefined>;
   onContinue: () => void;
@@ -32,22 +32,24 @@ type Props = {
 const InputPrompt = ({
   sendPrompt,
   onContinue,
-  responseGenerated,
+  responseGenerated, // prop from parent
   modality,
   questionType,
   response,
+  isLoading,
   selectedIdx,
   questionID,
 }: Props) => {
   const [inputText, setInputText] = useState<string>("");
-  const [oldResponse, setOldResponse] = useState<string>("");
+  const [oldPrompts, setOldPrompts] = useState<string>("");
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [localResponseGenerated, setLocalResponseGenerated] = useState(false); // <-- local state
   let timeTaken = 0.0;
 
   // Set TIME based on questionType
-  const TIME = questionType === "image" ? 2 * 60 : 1.5 * 60;
+  const TIME = questionType === "image" ? 8 * 60 : 6 * 60;
 
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
@@ -81,7 +83,7 @@ const InputPrompt = ({
     } else if (timeLeft === 0) {
       setIsRunning(false);
       // Only show popup if timer is over AND response is present but not selected
-      if (responseGenerated && !isContentSelected) {
+      if (responseGenerated && localResponseGenerated && !isContentSelected) {
         setShowPopup(true);
       }
     }
@@ -93,6 +95,7 @@ const InputPrompt = ({
     timeLeft,
     isContentSelected,
     responseGenerated,
+    localResponseGenerated,
   ]);
 
   useEffect(() => {
@@ -147,34 +150,26 @@ const InputPrompt = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    responseGenerated = false;
+    setLocalResponseGenerated(false); // <-- reset on submit
     if (hasSubmitted) {
       return;
     }
     setHasSubmitted(true);
     saveTimeTaken();
-    let res = sendPrompt(inputText, oldResponse, timeTaken);
+    let res = sendPrompt(inputText, oldPrompts, timeTaken);
     setInputText("");
     res.then((response) => {
       if (response) {
-        response.type === "image"
-          ? setOldResponse(
-              response.prompt.length === 0
-                ? ""
-                : response.prompt[response.prompt.length - 1]
-            )
-          : setOldResponse(
-              response.content.length === 0
-                ? ""
-                : response.content[response.content.length - 1]
-            );
-        //console.log("Response received: ", response);
+        const formatOldPrompts = (prompts: string[]) => {
+          if (!prompts || prompts.length === 0) return "";
+          return prompts.map((p) => `$Prompt>\n${p}`).join("\n");
+        };
+        setOldPrompts(formatOldPrompts(response.prompt));
       } else {
         console.error("No response received from sendPrompt");
       }
-      responseGenerated = true;
+      setLocalResponseGenerated(true); // <-- set true when response arrives
       setHasSubmitted(false);
-      // setIsRunning(true); // You don't need to set this here, timer should keep running
     });
   };
 
@@ -191,33 +186,26 @@ const InputPrompt = ({
       setInputText("");
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
-      if (!isRunning && timeLeft > 0) setIsRunning(true); // Start timer on first mic
+      if (!isRunning && timeLeft > 0) setIsRunning(true);
     } else {
       SpeechRecognition.stopListening();
       setInputText(finalTranscript);
       setHasSubmitted(true);
-      responseGenerated = false;
+      setLocalResponseGenerated(false); // <-- reset on submit
       saveTimeTaken();
-      let res = sendPrompt(transcript, oldResponse, timeTaken);
+      let res = sendPrompt(transcript, oldPrompts, timeTaken);
       res.then((response) => {
         if (response) {
-          response.type === "image"
-            ? setOldResponse(
-                response.prompt.length === 0
-                  ? ""
-                  : response.prompt[response.prompt.length - 1]
-              )
-            : setOldResponse(
-                response.content.length === 0
-                  ? ""
-                  : response.content[response.content.length - 1]
-              );
+          const formatOldPrompts = (prompts: string[]) => {
+            if (!prompts || prompts.length === 0) return "";
+            return prompts.map((p) => `$Prompt>\n${p}`).join("\n");
+          };
+          setOldPrompts(formatOldPrompts(response.prompt));
         } else {
           console.error("No response received from sendPrompt");
         }
         setHasSubmitted(false);
-        responseGenerated = true;
-        // Do NOT set isRunning here, let it keep running!
+        setLocalResponseGenerated(true); // <-- set true when response arrives
       });
     }
     setInputText("");
