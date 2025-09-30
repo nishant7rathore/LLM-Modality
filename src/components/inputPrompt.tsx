@@ -47,7 +47,7 @@ const InputPrompt = ({
   let timeTaken = 0.0;
 
   // Set TIME based on questionType
-  const TIME = questionType === "image" ? 8 * 60 : 5 * 60;
+  const TIME = questionType === "image" ? 10 * 60 : 5 * 60;
 
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
@@ -80,12 +80,20 @@ const InputPrompt = ({
       }, 1000);
     } else if (timeLeft === 0) {
       setIsRunning(false);
-      if (!isContentSelected) {
+      // Only show popup if timer is over AND response is present but not selected
+      if (responseGenerated && !isContentSelected) {
         setShowPopup(true);
       }
     }
     return () => clearInterval(timer);
-  }, [listening, finalTranscript, isRunning, timeLeft, isContentSelected]);
+  }, [
+    listening,
+    finalTranscript,
+    isRunning,
+    timeLeft,
+    isContentSelected,
+    responseGenerated,
+  ]);
 
   useEffect(() => {
     // Only update inputText live for voice modality and while listening
