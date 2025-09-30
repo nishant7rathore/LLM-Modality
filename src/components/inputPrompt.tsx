@@ -47,7 +47,7 @@ const InputPrompt = ({
   let timeTaken = 0.0;
 
   // Set TIME based on questionType
-  const TIME = questionType === "image" ? 8 * 60 : 5 * 60;
+  const TIME = questionType === "image" ? 2 * 60 : 1.5 * 60;
 
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
