@@ -71,7 +71,7 @@ router.post("/dalle", authenticateToken, async (req, res) => {
   } catch (error) {
     const errorMessage = "I am sorry, Something went wrong!";
     console.log("Error:" + errorMessage + "- ", error);
-    res.status(500).json({ error: errorMessage });
+    res.status(500).json({ success: false, message: errorMessage });
   }
 });
 

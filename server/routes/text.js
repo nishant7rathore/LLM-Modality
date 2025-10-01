@@ -44,6 +44,7 @@ router.post("/text", authenticateToken, async (req, res) => {
   } catch (error) {
     console.log("Error: ", error);
     response = "I am sorry, Something went wrong!";
+    return res.status(500).json({ success: false, message: response });
   }
   res.json(response);
 });

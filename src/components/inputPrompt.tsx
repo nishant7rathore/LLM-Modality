@@ -46,6 +46,8 @@ const InputPrompt = ({
   const [hasListened, setHasListened] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState(false);
   const [localResponseGenerated, setLocalResponseGenerated] = useState(false); // <-- local state
+  const [errorPopup, setErrorPopup] = useState(false);
+
   let timeTaken = 0.0;
 
   // Set TIME based on questionType
@@ -116,6 +118,14 @@ const InputPrompt = ({
     resetTranscript();
   }, [questionID, resetTranscript, TIME]);
 
+  // Auto-close error popup after 10 seconds
+  useEffect(() => {
+    if (errorPopup) {
+      const timer = setTimeout(() => setErrorPopup(false), 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorPopup]);
+
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
@@ -150,7 +160,7 @@ const InputPrompt = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    setLocalResponseGenerated(false); // <-- reset on submit
+    setLocalResponseGenerated(false);
     if (hasSubmitted) {
       return;
     }
@@ -166,9 +176,10 @@ const InputPrompt = ({
         };
         setOldPrompts(formatOldPrompts(response.prompt));
       } else {
+        setErrorPopup(true); // Show error popup
         console.error("No response received from sendPrompt");
       }
-      setLocalResponseGenerated(true); // <-- set true when response arrives
+      setLocalResponseGenerated(true);
       setHasSubmitted(false);
     });
   };
@@ -191,7 +202,7 @@ const InputPrompt = ({
       SpeechRecognition.stopListening();
       setInputText(finalTranscript);
       setHasSubmitted(true);
-      setLocalResponseGenerated(false); // <-- reset on submit
+      setLocalResponseGenerated(false);
       saveTimeTaken();
       let res = sendPrompt(transcript, oldPrompts, timeTaken);
       res.then((response) => {
@@ -202,10 +213,11 @@ const InputPrompt = ({
           };
           setOldPrompts(formatOldPrompts(response.prompt));
         } else {
+          setErrorPopup(true); // Show error popup
           console.error("No response received from sendPrompt");
         }
         setHasSubmitted(false);
-        setLocalResponseGenerated(true); // <-- set true when response arrives
+        setLocalResponseGenerated(true);
       });
     }
     setInputText("");
@@ -229,6 +241,7 @@ const InputPrompt = ({
 
   // Handler to close popup
   const handleClosePopup = () => setShowPopup(false);
+  const handleCloseErrorPopup = () => setErrorPopup(false);
 
   // Only show "Continue to Survey" button if timer is over and a response is selected
   const showContinueButton =
@@ -346,6 +359,59 @@ const InputPrompt = ({
           )}
         </div>
       </form>
+      {/* Error Pop-up Modal */}
+      <AnimatePresence>
+        {errorPopup && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+            style={{ pointerEvents: "auto" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full flex flex-col items-center border-4 border-pink-300"
+              style={{ marginBottom: "18rem" }}
+              initial={{ scale: 0.7, opacity: 0, y: 60 }}
+              animate={{ scale: 1.05, opacity: 1, y: 0 }}
+              exit={{ scale: 0.7, opacity: 0, y: 60 }}
+              transition={{ type: "spring", stiffness: 300, damping: 18 }}
+            >
+              <div className="mb-4">
+                <svg
+                  className="w-16 h-16 text-pink-400 mx-auto animate-bounce"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-pink-500 mb-2 text-center">
+                Request Rejected
+              </h2>
+              <p className="text-gray-700 dark:text-gray-200 text-center mb-6">
+                Your request was rejected by OpenAI’s safety system. Please
+                refine your request and try again.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-5 py-2 rounded bg-gradient-to-r from-pink-400 to-blue-500 text-white font-semibold shadow"
+                onClick={handleCloseErrorPopup}
+              >
+                Got it!
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Pop-up Modal */}
       <AnimatePresence>
         {showPopup && (
