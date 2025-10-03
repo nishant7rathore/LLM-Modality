@@ -33,7 +33,7 @@ The goal of this study is to understand the impact of text entry input technique
 
 ## What you are being invited to do in this study:
 
-Participants will be required to write a prompt for a large language model to create a short story (ChatGPT) or for an image generation model to match a description (DALLE 3) for the following conditions: **keyboard text entry and speech text entry**. For each condition, participants will be given approximately **7 minutes**. After each condition, participants will be required to fill out several surveys from the literature including: the systems usability scale, the NASA TLX, and a psychological ownership questionnaire.
+Participants will be required to write a prompt for a large language model to create a blog post (ChatGPT) or for an image generation model to match a description (DALLE 3) for the following conditions: **keyboard text entry and speech text entry**. For each condition, participants will be given approximately **7 minutes**. After each condition, participants will be required to fill out several surveys from the literature including: the systems usability scale, the NASA TLX, and a psychological ownership questionnaire.
 
 While we will only record the outputted text as recorded from speech input, and decoded through your tablet microphone, the web application will require permission to access the microphone for obtaining speech data. **The survey and demographic data collected from you as part of your participation in this project will be stored electronically by AWS through Vercel and Render.**
 
