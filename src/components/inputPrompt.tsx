@@ -29,6 +29,8 @@ type Props = {
   questionID: number;
 };
 
+const IMAGE_TIME = Number(process.env.REACT_APP_IMAGE_TIME) || 8;
+
 const InputPrompt = ({
   sendPrompt,
   onContinue,
@@ -51,7 +53,8 @@ const InputPrompt = ({
   let timeTaken = 0.0;
 
   // Set TIME based on questionType
-  const TIME = questionType === "image" ? 8 * 60 : 6 * 60;
+  const TIME =
+    questionType === "image" ? IMAGE_TIME * 60 : 0.75 * IMAGE_TIME * 60;
 
   const [startTime, setStartTime] = useState(Date.now());
   const [timeLeft, setTimeLeft] = useState(TIME);
