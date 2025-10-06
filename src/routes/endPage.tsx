@@ -25,11 +25,26 @@ const EndPage = () => {
           <motion.div
             initial={{ rotate: -10, scale: 0.7, opacity: 0 }}
             animate={{ rotate: 0, scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 10 }}
+            transition={{
+              delay: 0.2,
+              type: "spring",
+              stiffness: 200,
+              damping: 10,
+            }}
             className="mb-6"
           >
-            <svg className="w-24 h-24 text-pink-400 mx-auto animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 17l-5 3 1.9-5.6L4 10.5l5.7-.4L12 5l2.3 5.1 5.7.4-4.9 3.9L17 20z" />
+            <svg
+              className="w-24 h-24 text-pink-400 mx-auto animate-bounce"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 17l-5 3 1.9-5.6L4 10.5l5.7-.4L12 5l2.3 5.1 5.7.4-4.9 3.9L17 20z"
+              />
             </svg>
           </motion.div>
           <motion.h1
@@ -46,7 +61,9 @@ const EndPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            You will be redirected to Prolific in <span className="font-semibold text-blue-600">5 minutes</span> to submit your completion code.
+            You will be redirected to Prolific in{" "}
+            <span className="font-semibold text-blue-600">1 minute</span> to
+            submit your completion code.
           </motion.p>
           <motion.div
             className="bg-blue-50 border border-blue-200 rounded-xl px-6 py-4 mb-4 text-center"
@@ -54,8 +71,12 @@ const EndPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.7 }}
           >
-            <span className="block text-gray-700 mb-2">Your Prolific completion code:</span>
-            <span className="text-2xl font-mono font-bold text-blue-700 tracking-widest">{COMPLETION_CODE}</span>
+            <span className="block text-gray-700 mb-2">
+              Your Prolific completion code:
+            </span>
+            <span className="text-2xl font-mono font-bold text-blue-700 tracking-widest">
+              {COMPLETION_CODE}
+            </span>
           </motion.div>
           <motion.p
             className="text-sm text-gray-500 text-center"
@@ -63,8 +84,13 @@ const EndPage = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
           >
-            Please keep this page open. You will be redirected automatically.<br />
-            If not, <a href={REDIRECT_URL} className="text-blue-600 underline">click here</a> to submit your code manually.
+            Please keep this page open. You will be redirected automatically.
+            <br />
+            If not,{" "}
+            <a href={REDIRECT_URL} className="text-blue-600 underline">
+              click here
+            </a>{" "}
+            to submit your code manually.
           </motion.p>
         </motion.div>
       </AnimatePresence>
