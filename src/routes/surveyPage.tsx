@@ -193,6 +193,18 @@ const SurveyPage = () => {
     const currentQuestionIndex = parseInt(
       localStorage.getItem("currentQuestionIndex") || "0"
     );
+    if (
+      isNaN(currentQuestionIndex) ||
+      currentQuestionIndex < 0 ||
+      currentQuestionIndex > 4
+    ) {
+      // clear the local storage
+      localStorage.removeItem("studyData");
+      localStorage.removeItem("currentQuestionIndex");
+      localStorage.removeItem("order");
+      localStorage.removeItem("token");
+      navigate("/end");
+    }
     if (currentQuestionIndex < 4) {
       navigate("/prompt");
     } else {

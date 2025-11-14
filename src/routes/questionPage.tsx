@@ -53,9 +53,13 @@ const QuestionPage = () => {
         });
         if (res.data.questions) {
           setQuestions(res.data.questions);
+        } else {
+          console.error("No questions received!");
+          navigate("/");
         }
       } catch (error) {
         console.error("Error fetching question: ", error);
+        navigate("/");
       } finally {
         setLoading(false);
       }
