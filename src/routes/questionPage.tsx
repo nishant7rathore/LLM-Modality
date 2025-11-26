@@ -120,13 +120,23 @@ const QuestionPage = () => {
       const res = await axios.post(url, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.status === 200) {
-        const content = res.data;
+
+      if (res.status === 200 && res.data.success) {
+        const content = res.data.image_url || res.data; // Handle image or text response
         const type = isImage ? "image" : "text";
         addResponse(inputText, content, type, timeTaken);
+      } else {
+        console.error(
+          "Error in response:",
+          res.data.message || "Unknown error"
+        );
+        alert("Failed to generate the response. Please try again.");
       }
     } catch (error) {
-      console.error("Error sending prompt: ", error);
+      console.error("Error sending prompt:", error);
+      alert(
+        "An error occurred while generating the response. Please try again."
+      );
     } finally {
       setResponseLoading(false);
       return responseRef.current; // Return the response for further processing if needed
