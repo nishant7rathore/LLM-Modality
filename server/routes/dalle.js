@@ -67,7 +67,7 @@ router.post("/dalle", authenticateToken, async (req, res) => {
     const image_url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
     console.log("Image URL: ", image_url);
 
-    res.json(image_url);
+    res.json({ success: true, image_url: image_url });
   } catch (error) {
     const errorMessage = "I am sorry, Something went wrong!";
     console.log("Error:" + errorMessage + "- ", error);
