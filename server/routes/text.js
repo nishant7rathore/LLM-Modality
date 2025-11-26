@@ -46,7 +46,7 @@ router.post("/text", authenticateToken, async (req, res) => {
     response = "I am sorry, Something went wrong!";
     return res.status(500).json({ success: false, message: response });
   }
-  res.json(response);
+  res.json({ success: true, text: response });
 });
 
 module.exports = router;
