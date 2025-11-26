@@ -66,7 +66,7 @@ const QuestionPage = () => {
     };
 
     fetchQuestions();
-  }, []);
+  }, [navigate]);
 
   const addResponse = (
     newPrompt: string,
