@@ -122,7 +122,7 @@ const QuestionPage = () => {
       });
 
       if (res.status === 200 && res.data.success) {
-        const content = res.data.image_url || res.data; // Handle image or text response
+        const content = res.data; // Handle image or text response
         const type = isImage ? "image" : "text";
         addResponse(inputText, content, type, timeTaken);
       } else {
