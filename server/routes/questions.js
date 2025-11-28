@@ -217,16 +217,16 @@ const QUESTIONS = {
     {
       text: "Question 8.1",
       type: "text",
-      modality: "type",
+      modality: "voice",
       content:
-        "Choose one hobby, interest, or cause you deeply care about and persuade readers why more people should explore it.",
+        "Imagine your dream job in 10 years — describe what it looks like, why it excites you, and how it fits your values.",
     },
     {
       text: "Question 8.2",
       type: "text",
-      modality: "voice",
+      modality: "type",
       content:
-        "Imagine your dream job in 10 years — describe what it looks like, why it excites you, and how it fits your values.",
+        "Choose one hobby, interest, or cause you deeply care about and persuade readers why more people should explore it.",
     },
     {
       text: "Question 8.3",
