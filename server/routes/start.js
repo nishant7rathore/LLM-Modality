@@ -77,7 +77,7 @@ const getNextOrder = async () => {
     }
   }
 
-  return 1;
+  return 3;
 };
 
 // Route to start session
