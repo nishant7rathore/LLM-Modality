@@ -125,6 +125,98 @@ const QUESTIONS = {
       content:
         "Choose one hobby, interest, or cause you deeply care about and persuade readers why more people should explore it.",
     },
+  ],
+  
+  5: [
+    {
+      text: "Question 1.1",
+      type: "image",
+      modality: "type",
+      content:
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
+    },
+    {
+      text: "Question 1.2",
+      type: "image",
+      modality: "voice",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
+    },
+    {
+      text: "Question 1.3",
+      type: "text",
+      modality: "voice",
+      content:
+        "Imagine your dream job in 10 years — describe what it looks like, why it excites you, and how it fits your values.",
+    },
+    {
+      text: "Question 1.4",
+      type: "text",
+      modality: "type",
+      content:
+        "Choose one hobby, interest, or cause you deeply care about and persuade readers why more people should explore it.",
+    },
+  ],
+  
+  6: [
+    {
+      text: "Question 1.1",
+      type: "image",
+      modality: "type",
+      content:
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
+    },
+    {
+      text: "Question 1.2",
+      type: "image",
+      modality: "voice",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
+    },
+    {
+      text: "Question 1.3",
+      type: "text",
+      modality: "voice",
+      content:
+        "Imagine your dream job in 10 years — describe what it looks like, why it excites you, and how it fits your values.",
+    },
+    {
+      text: "Question 1.4",
+      type: "text",
+      modality: "type",
+      content:
+        "Choose one hobby, interest, or cause you deeply care about and persuade readers why more people should explore it.",
+    },
+  ],
+  7: [
+    {
+      text: "Question 1.1",
+      type: "image",
+      modality: "type",
+      content:
+        "Create an image of the scene from your happiest memory, including elements like people, place, or feelings you remember.",
+    },
+    {
+      text: "Question 1.2",
+      type: "image",
+      modality: "voice",
+      content:
+        "Create a self-portrait that represents how you see yourself, including aspects like appearance, personality, or mood.",
+    },
+    {
+      text: "Question 1.3",
+      type: "text",
+      modality: "voice",
+      content:
+        "Imagine your dream job in 10 years — describe what it looks like, why it excites you, and how it fits your values.",
+    },
+    {
+      text: "Question 1.4",
+      type: "text",
+      modality: "type",
+      content:
+        "Choose one hobby, interest, or cause you deeply care about and persuade readers why more people should explore it.",
+    },
   ]
   // ,
   // 1: [
